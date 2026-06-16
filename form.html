@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Experience Questionnaire</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #1e3a5f;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-light: #eff6ff;
+      --bg: #f1f5f9;
+      --white: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 620px;
+    }
+
+    /* Progress */
+    .progress-wrap {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .progress-track {
+      background: #dde4ee;
+      border-radius: 100px;
+      height: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #60a5fa);
+      border-radius: 100px;
+      transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Card */
+    .card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 52px 52px 44px;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.06), 0 8px 32px rgba(15,23,42,0.08);
+    }
+    @media (max-width: 520px) {
+      .card { padding: 36px 28px 32px; border-radius: 20px; }
+    }
+
+    /* Step visibility */
+    .step { display: none; }
+    .step.active {
+      display: block;
+      animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(18px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .step.back-active {
+      display: block;
+      animation: slideInBack 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes slideInBack {
+      from { opacity: 0; transform: translateX(-18px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Icons */
+    .icon-wrap {
+      width: 60px; height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 28px;
+    }
+    .icon-wrap svg { width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .check-wrap {
+      width: 68px; height: 68px;
+      background: #dcfce7;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 28px;
+    }
+    .check-wrap svg { width: 34px; height: 34px; stroke: var(--success); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Headings */
+    .title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+    .subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    /* Step label */
+    .step-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    /* Question */
+    .question {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.45;
+      margin-bottom: 8px;
+    }
+    .hint {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .q-spacer { margin-bottom: 24px; }
+
+    /* Choices */
+    .choices { display: flex; flex-direction: column; gap: 10px; }
+
+    .choice-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 18px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.1s;
+      width: 100%;
+      font-family: inherit;
+      line-height: 1.4;
+    }
+    .choice-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent);
+      transform: translateX(3px);
+    }
+    .choice-btn.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+    .dot {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid #cbd5e1;
+      flex-shrink: 0;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .choice-btn.selected .dot,
+    .choice-btn:hover .dot {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+    .dot::after {
+      content: '';
+      display: none;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: white;
+    }
+    .choice-btn.selected .dot::after,
+    .choice-btn:hover .dot::after { display: block; }
+
+    /* Text inputs */
+    .input-field {
+      width: 100%;
+      padding: 15px 18px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: inherit;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+      background: var(--white);
+    }
+    .input-field:focus { border-color: var(--accent); }
+    .input-field::placeholder { color: #94a3b8; }
+
+    /* Buttons */
+    .btn-row { margin-top: 28px; display: flex; gap: 10px; align-items: center; }
+
+    .btn-primary {
+      padding: 14px 30px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      font-family: inherit;
+      letter-spacing: 0.01em;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    .btn-back {
+      padding: 14px 18px;
+      background: none;
+      color: var(--muted);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .btn-back:hover { border-color: #94a3b8; color: var(--text); }
+
+    /* Error */
+    .err { color: #dc2626; font-size: 13px; margin-top: 10px; display: none; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #94a3b8;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Progress bar (hidden on welcome/thanks) -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-meta">
+      <span id="progressLabel">Question 1 of 10</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <!-- ── STEP 0: Welcome ── -->
+    <div class="step active" id="step-0">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div class="title">How was your mortgage experience?</div>
+      <div class="subtitle">
+        We'd love to hear about your experience with us. By answering a few short questions, you help us understand how we served you — and where we can do better.<br><br>
+        It takes around 2 minutes.
+      </div>
+      <button class="btn-primary" onclick="navigate(1)">Get started &rarr;</button>
+    </div>
+
+    <!-- ── STEP 1: Your name ── -->
+    <div class="step" id="step-1">
+      <div class="step-label">Before we start</div>
+      <div class="question">What's your name?</div>
+      <div class="q-spacer"></div>
+      <input type="text" class="input-field" id="inp-name" placeholder="Your full name"
+             oninput="onText('inp-name', 'btn-1-next', 'name')">
+      <div class="btn-row">
+        <button class="btn-primary" id="btn-1-next" disabled onclick="navigate(2)">Continue &rarr;</button>
+        <button class="btn-back" onclick="navigate(0, true)">Back</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Broker name ── -->
+    <div class="step" id="step-2">
+      <div class="step-label">Before we start</div>
+      <div class="question" id="q2-title">And who was your Mortgage Broker?</div>
+      <div class="q-spacer"></div>
+      <input type="text" class="input-field" id="inp-broker" placeholder="Broker's full name"
+             oninput="onText('inp-broker', 'btn-2-next', 'broker')">
+      <div class="btn-row">
+        <button class="btn-primary" id="btn-2-next" disabled onclick="navigate(3)">Continue &rarr;</button>
+        <button class="btn-back" onclick="navigate(1, true)">Back</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Q1 — Adviser knowledge ── -->
+    <div class="step" id="step-3">
+      <div class="step-label">Question 1 of 10</div>
+      <div class="question" id="q1-text">Did you feel your Adviser was suitably knowledgeable?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q1','Yes',4)">
+          <span class="dot"></span>Yes, I agree with this
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q1','No',4)">
+          <span class="dot"></span>No, I did not get this impression
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Q2 — Report accuracy ── -->
+    <div class="step" id="step-4">
+      <div class="step-label">Question 2 of 10</div>
+      <div class="question">You will have received a report explaining our recommendation. Did it accurately reflect what was discussed?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q2','Not received',5)">
+          <span class="dot"></span>I have not received this report
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q2','Yes - easy to understand',5)">
+          <span class="dot"></span>Yes, and it was easy to understand
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q2','Yes - did not understand',5)">
+          <span class="dot"></span>Yes, but I didn't really understand it
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 5: Q3 — Report walkthrough (CONDITIONAL) ── -->
+    <div class="step" id="step-5">
+      <div class="step-label">Question 3 of 10</div>
+      <div class="question">Would you like your Adviser to walk you through the report?</div>
+      <div class="hint">Our advice letters can be detailed — we're happy to call and explain everything.</div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q3','No - fully understood',6)">
+          <span class="dot"></span>No thanks, I fully understand my new mortgage
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q3','Yes - please call me',6)">
+          <span class="dot"></span>Yes please — I'd like my Adviser to call me
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 6: Q4 — Rate type ── -->
+    <div class="step" id="step-6">
+      <div class="step-label">Question 4 of 10</div>
+      <div class="question">Does your new mortgage have a Fixed or Variable interest rate?</div>
+      <div class="hint">Fixed = your payments stay the same for a set period. Variable = payments may change with interest rates.</div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q4','Fixed',7)">
+          <span class="dot"></span>Fixed — my payments are unchanged for a set period
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q4','Variable',7)">
+          <span class="dot"></span>Variable — my payments may fluctuate
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q4','Unsure',7)">
+          <span class="dot"></span>I'm unsure — please can you clarify
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 7: Q5 — Future review ── -->
+    <div class="step" id="step-7">
+      <div class="step-label">Question 5 of 10</div>
+      <div class="question">Did your Adviser explain they'll review your mortgage before the initial rate expires?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q5','Yes',8)">
+          <span class="dot"></span>Yes
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q5','No',8)">
+          <span class="dot"></span>No
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 8: Q6 — Home at risk ── -->
+    <div class="step" id="step-8">
+      <div class="step-label">Question 6 of 10</div>
+      <div class="question">Did your Adviser explain that your home is at risk if you do not keep up your mortgage payments?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q6','Yes',9)">
+          <span class="dot"></span>Yes
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q6','No',9)">
+          <span class="dot"></span>No
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 9: Q7 — Protection importance ── -->
+    <div class="step" id="step-9">
+      <div class="step-label">Question 7 of 10</div>
+      <div class="question">Did your Adviser explain the importance of protecting your home?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q7','Yes',10)">
+          <span class="dot"></span>Yes
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q7','No',10)">
+          <span class="dot"></span>No
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 10: Q8 — Protection status ── -->
+    <div class="step" id="step-10">
+      <div class="step-label">Question 8 of 10</div>
+      <div class="question">Which best describes your current protection situation?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q8','Arranged with you',11)">
+          <span class="dot"></span>I have already arranged protection policies with you
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q8','Not protecting - understand risks',11)">
+          <span class="dot"></span>I've decided not to protect my mortgage — I understand the risks
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q8','Still discussing with you',11)">
+          <span class="dot"></span>I'm still in discussion with you about my protection needs
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q8','Would like to discuss',11)">
+          <span class="dot"></span>I'd like to start a discussion about my protection needs
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q8','Discussing with another company',11)">
+          <span class="dot"></span>I'm in discussion with another company about protection
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q8','Arranged with another company',11)">
+          <span class="dot"></span>I've already arranged protection with another company
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 11: Q9 — Literature clarity ── -->
+    <div class="step" id="step-11">
+      <div class="step-label">Question 9 of 10</div>
+      <div class="question">How clear have you found our written communications so far?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q9','Clear',12)">
+          <span class="dot"></span>Clear
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q9','Unclear',12)">
+          <span class="dot"></span>Unclear
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 12: Q10 — Support needed ── -->
+    <div class="step" id="step-12">
+      <div class="step-label">Question 10 of 10</div>
+      <div class="question">Did you require any particular support during this process?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="choose(this,'q10','No',13)">
+          <span class="dot"></span>No, not really
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q10','Yes - needs met',13)">
+          <span class="dot"></span>Yes, and my needs were met
+        </button>
+        <button class="choice-btn" onclick="choose(this,'q10','Yes - needs not met',13)">
+          <span class="dot"></span>Yes, but I didn't receive adequate support
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 13: Review & submit ── -->
+    <div class="step" id="step-13">
+      <div class="step-label">Almost done</div>
+      <div class="title" style="font-size:22px">Ready to submit?</div>
+      <div class="subtitle" id="review-subtitle">Thanks for completing the questionnaire. Click below to send your responses.</div>
+      <div id="submit-err" class="err"></div>
+      <div class="btn-row">
+        <button class="btn-primary" id="btn-submit" onclick="submitForm()">Submit responses &rarr;</button>
+        <button class="btn-back" onclick="navigate(12, true)">Back</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 14: Thank you ── -->
+    <div class="step" id="step-14">
+      <div class="check-wrap">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="title">Thank you!</div>
+      <div class="subtitle">
+        Your feedback has been received. We really appreciate you taking the time — your responses help us continuously improve the service we provide to our clients.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">Consumer Duty Questionnaire &nbsp;&middot;&nbsp; Your responses are confidential</div>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════════════
+  //  ⚙️  CONFIGURATION  — update these before deploying
+  // ═══════════════════════════════════════════════════════
+  const CONFIG = {
+    AIRTABLE_TOKEN:      "patX8sg4Ag5xoUtdT.e8105c21b020db2860b4d13258975b9c6762b565f5de94dac639e895bbaafb5d",  // ← paste your full pat… token here
+    AIRTABLE_BASE_ID:    "appJEb2mGCdrEKbpY",
+    AIRTABLE_TABLE_NAME: 'Responses'
+  };
+  // ═══════════════════════════════════════════════════════
+
+  const answers = {};
+  let current = 0;
+  const history = [0];
+
+  // Total "real" question steps (Q1–Q10 = steps 3–12)
+  const TOTAL_Q = 10;
+
+  function updateProgress(step) {
+    const wrap = document.getElementById('progressWrap');
+    if (step <= 2 || step >= 14) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+
+    // Step 3 = Q1, step 12 = Q10, step 13 = review
+    const qNum  = step <= 12 ? step - 2 : TOTAL_Q;
+    const label = step <= 12 ? `Question ${qNum} of ${TOTAL_Q}` : 'Review';
+    const pct   = Math.round((qNum / TOTAL_Q) * 100);
+
+    document.getElementById('progressLabel').textContent = label;
+    document.getElementById('progressPct').textContent   = pct + '%';
+    document.getElementById('progressFill').style.width  = pct + '%';
+  }
+
+  function showStep(step, isBack = false) {
+    const old = document.getElementById('step-' + current);
+    old.classList.remove('active', 'back-active');
+
+    current = step;
+    updateProgress(step);
+
+    const el = document.getElementById('step-' + step);
+    el.classList.add(isBack ? 'back-active' : 'active');
+
+    // Personalise step 2 once name is known
+    if (step === 2 && answers.name) {
+      document.getElementById('q2-title').textContent =
+        `And who was ${answers.name}'s Mortgage Broker?`;
+    }
+    // Personalise Q1 greeting
+    if (step === 3 && answers.name) {
+      document.getElementById('q1-text').textContent =
+        `${answers.name}, did you feel your Adviser was suitably knowledgeable?`;
+    }
+    // Set review subtitle
+    if (step === 13 && answers.name) {
+      document.getElementById('review-subtitle').textContent =
+        `Thanks, ${answers.name}. Click below to submit your responses.`;
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function navigate(target, isBack = false) {
+    if (!isBack) {
+      history.push(target);
+    } else {
+      history.pop();
+    }
+    showStep(target, isBack);
+  }
+
+  function choose(btn, key, value, nextStep) {
+    // Deselect siblings
+    btn.parentElement.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    answers[key] = value;
+
+    // Conditional: skip Q3 if report not received
+    let target = nextStep;
+    if (key === 'q2' && value === 'Not received') {
+      answers.q3 = 'N/A - Report not received';
+      target = 6; // skip step 5
+    }
+
+    setTimeout(() => navigate(target), 270);
+  }
+
+  function onText(inputId, btnId, key) {
+    const val = document.getElementById(inputId).value.trim();
+    document.getElementById(btnId).disabled = (val.length === 0);
+    answers[key] = val;
+  }
+
+  // Enter key on text inputs
+  document.getElementById('inp-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !document.getElementById('btn-1-next').disabled) navigate(2);
+  });
+  document.getElementById('inp-broker').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !document.getElementById('btn-2-next').disabled) navigate(3);
+  });
+
+  async function submitForm() {
+    const btn = document.getElementById('btn-submit');
+    const err = document.getElementById('submit-err');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    err.style.display = 'none';
+
+    const fields = {
+      'Name':                    answers.name   || '',
+      'Broker Name':             answers.broker || '',
+      'Q1 Adviser Knowledge':    answers.q1     || '',
+      'Q2 Report Accuracy':      answers.q2     || '',
+      'Q3 Report Walkthrough':   answers.q3     || '',
+      'Q4 Rate Type':            answers.q4     || '',
+      'Q5 Future Review':        answers.q5     || '',
+      'Q6 Home At Risk Warning': answers.q6     || '',
+      'Q7 Protection Importance':answers.q7     || '',
+      'Q8 Protection Status':    answers.q8     || '',
+      'Q9 Literature Clarity':   answers.q9     || '',
+      'Q10 Support Required':    answers.q10    || '',
+      'Submitted At':            new Date().toISOString()
+    };
+
+    try {
+      const res = await fetch(
+        `https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE_NAME)}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${CONFIG.AIRTABLE_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ fields })
+        }
+      );
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error?.message || `HTTP ${res.status}`);
+      }
+
+      navigate(14);
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Submit responses →';
+      err.textContent = '⚠️  Submission failed: ' + e.message;
+      err.style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>
