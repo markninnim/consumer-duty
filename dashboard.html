@@ -827,10 +827,10 @@
         <td style="font-weight:600;white-space:nowrap">${f['Name'] || '—'}</td>
         <td style="white-space:nowrap">${f['Broker Name'] || '—'}</td>
         <td>${badge(f['Q1 Adviser Knowledge'], ['Yes'], ['No'])}</td>
+        <td>${badge(f['Q2 Report Accuracy'], ['Yes - easy to understand'], ['No - needed further explanation'])}</td>
         <td>${badge(f['Q4 Rate Type'], ['Fixed','Variable'], ['Unsure'])}</td>
         <td>${badge(f['Q9 Literature Clarity'], ['Clear'], ['Unclear'])}</td>
-        <td>${badge(f['Q10 Support Required'], ['No','Yes - needs met'], ['Yes - needs not met'])}</td>
-        <td style="white-space:nowrap;color:#64748b">${formatDate(f['Submitted At'])}</td>`;
+        <td>${badge(f['Q10 Support Required'], ['No','Yes - needs met'], ['Yes - needs not met'])}</td>`;
       body.appendChild(tr);
     });
   }
