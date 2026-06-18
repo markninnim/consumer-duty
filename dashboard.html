@@ -273,16 +273,8 @@
     </div>
     <div class="header-stats">
       <div class="hstat"><div class="hstat-value" id="stat-total">—</div><div class="hstat-label">Total Responses</div></div>
-      <div class="hstat"><div class="hstat-value" id="stat-adviser">—</div><div class="hstat-label">Adviser Satisfaction</div></div>
-      <div class="hstat"><div class="hstat-value" id="stat-clarity">—</div><div class="hstat-label">Literature Clarity</div></div>
-      <div class="hstat"><div class="hstat-value" id="stat-callbacks">—</div><div class="hstat-label">Callbacks Requested</div></div>
     </div>
     <button class="btn-refresh" onclick="loadData()">↻ Refresh</button>
-  </div>
-</div>
-    <div class="stat"><div class="stat-value" id="stat-adviser">—</div><div class="stat-label">Adviser Satisfaction</div></div>
-    <div class="stat"><div class="stat-value" id="stat-clarity">—</div><div class="stat-label">Literature Clarity</div></div>
-    <div class="stat"><div class="stat-value" id="stat-callbacks">—</div><div class="stat-label">Callbacks Requested</div></div>
   </div>
 </div>
 
@@ -613,22 +605,6 @@
     document.getElementById('header-sub').textContent =
       `${total} response${total !== 1 ? 's' : ''} — last updated ${new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'})}`;
 
-    if (total === 0) {
-      ['stat-adviser','stat-clarity','stat-callbacks'].forEach(id =>
-        document.getElementById(id).textContent = '—');
-      return;
-    }
-
-    const adviserYes = records.filter(r => r.fields['Q1 Adviser Knowledge'] === 'Yes').length;
-    document.getElementById('stat-adviser').textContent =
-      pct(adviserYes, total) + '%';
-
-    const clarityYes = records.filter(r => r.fields['Q9 Literature Clarity'] === 'Clear').length;
-    document.getElementById('stat-clarity').textContent =
-      pct(clarityYes, total) + '%';
-
-    const callbacks = records.filter(r => r.fields['Q3 Report Walkthrough'] === 'Yes - please call me').length;
-    document.getElementById('stat-callbacks').textContent = callbacks;
   }
 
   async function loadData() {
