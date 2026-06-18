@@ -352,7 +352,7 @@
     <!-- ── STEP 4: Q2 — Report accuracy ── -->
     <div class="step" id="step-4">
       <div class="step-label">Question 2 of 10</div>
-      <div class="question">You will have received a report explaining our recommendation. Did it accurately reflect what was discussed?</div>
+      <div class="question" id="q2-question">You will have received a report explaining our recommendation. Did it accurately reflect what was discussed?</div>
       <div class="q-spacer"></div>
       <div class="choices">
         <button class="choice-btn" onclick="chooseQ2(this,'Not received')">
@@ -390,7 +390,7 @@
     <!-- ── STEP 6: Q3 — Report walkthrough (CONDITIONAL) ── -->
     <div class="step" id="step-6">
       <div class="step-label">Question 3 of 10</div>
-      <div class="question">Would you like your Adviser to walk you through the report?</div>
+      <div class="question" id="q3-text">Would you like your Adviser to walk you through the report?</div>
       <div class="hint">Our advice letters can be detailed. We're happy to call and explain everything.</div>
       <div class="choices">
         <button class="choice-btn" onclick="choose(this,'q3','No - fully understood',7)">
@@ -501,7 +501,8 @@
     <!-- ── STEP 12: Q8 — Protection status ── -->
     <div class="step" id="step-12">
       <div class="step-label">Question 8 of 10</div>
-      <div class="question">Which best describes your current protection situation?</div>
+      <div class="question" id="q8-question">Which best describes your current protection situation?</div>
+      <div class="hint">When we say protection, we mean insurance policies designed to support you upon accident, sickness, critical illness and death.</div>
       <div class="q-spacer"></div>
       <div class="choices">
         <button class="choice-btn" id="q8-opt1" onclick="choose(this,'q8','Arranged with adviser',13)">
@@ -624,6 +625,11 @@
   let current = 0;
   const history = [0];
 
+  // Returns the first word (first name) of a broker full name, or fallback
+  function firstName(name) {
+    return name ? name.trim().split(/\s+/)[0] : 'your Adviser';
+  }
+
   // Total "real" question steps (Q1–Q10 = steps 3–12)
   const TOTAL_Q = 10;
 
@@ -660,30 +666,38 @@
     }
     // Personalise Q1 greeting
     if (step === 3 && answers.name) {
-      const broker = answers.broker ? answers.broker : 'your Adviser';
+      const broker = firstName(answers.broker);
       document.getElementById('q1-text').textContent =
-        `${answers.name}, did you feel ${broker} was suitably knowledgeable?`;
+        `${firstName(answers.name)}, did you feel ${broker} was suitably knowledgeable?`;
+    }
+    // Personalise Q2 with broker first name
+    if (step === 4 && answers.broker) {
+      document.getElementById('q2-question').textContent =
+        `You will have received a report explaining our recommendation. Did it accurately reflect what you and ${firstName(answers.broker)} discussed?`;
     }
     // Reset Q4 unsure box when returning to step
     if (step === 7) {
       document.getElementById('q4-unsure-box').style.display = 'none';
       document.getElementById('q4-back-row').style.display = '';
       if (answers.broker) {
+        const fn4 = firstName(answers.broker);
         document.getElementById('q4-unsure-btn').innerHTML =
-          `<span class="dot"></span>I'm unsure, please can you ask ${answers.broker} to clarify for me.`;
-        document.getElementById('q4-unsure-broker').textContent = answers.broker;
+          `<span class="dot"></span>I'm unsure, please can you ask ${fn4} to clarify for me.`;
+        document.getElementById('q4-unsure-broker').textContent = fn4;
       }
     }
-    // Personalise Q3 call button with broker name
+    // Personalise Q3 question and call button with broker first name
     if (step === 6 && answers.broker) {
+      const fn3 = firstName(answers.broker);
+      document.getElementById('q3-text').textContent = `Would you like ${fn3} to walk you through the report?`;
       document.getElementById('q3-call-btn').innerHTML =
-        `<span class="dot"></span>Yes please, I'd like ${answers.broker} to call me.`;
+        `<span class="dot"></span>Yes please, I'd like ${fn3} to call me.`;
     }
-    // Reset Q5 info box when returning to step; personalise with broker name
+    // Reset Q5 info box when returning to step; personalise with broker first name
     if (step === 8) {
       document.getElementById('q5-info-box').style.display = 'none';
       document.getElementById('q5-back-row').style.display = '';
-      const b5 = answers.broker || 'your Adviser';
+      const b5 = firstName(answers.broker);
       document.getElementById('q5-text').textContent = `Did ${b5} explain they'll review your mortgage before the initial rate expires?`;
       document.getElementById('q5-broker').textContent = b5;
     }
@@ -692,36 +706,43 @@
       document.getElementById('q6-info-box').style.display = 'none';
       document.getElementById('q6-back-row').style.display = '';
     }
-    // Personalise Q6 with broker name
+    // Personalise Q6 with broker first name
     if (step === 10 && answers.broker) {
+      const fn6 = firstName(answers.broker);
       document.getElementById('q6-text').innerHTML =
-        `Did <strong>${answers.broker}</strong> explain that your home may be repossessed if you do not keep up repayments on your mortgage?`;
-      document.getElementById('q6-broker').textContent = answers.broker;
-      document.getElementById('q6-broker2').textContent = answers.broker;
+        `Did <strong>${fn6}</strong> explain that your home may be repossessed if you do not keep up repayments on your mortgage?`;
+      document.getElementById('q6-broker').textContent = fn6;
+      document.getElementById('q6-broker2').textContent = fn6;
     }
-    // Personalise Q8 options with broker name
+    // Personalise Q8 question with customer first name
+    if (step === 12 && answers.name) {
+      document.getElementById('q8-question').textContent =
+        `${firstName(answers.name)}, which best describes your current protection situation?`;
+    }
+    // Personalise Q8 options with broker first name
     if (step === 12 && answers.broker) {
-      document.getElementById('q8-broker1').textContent = answers.broker;
-      document.getElementById('q8-broker2').textContent = answers.broker;
+      const fn8 = firstName(answers.broker);
+      document.getElementById('q8-broker1').textContent = fn8;
+      document.getElementById('q8-broker2').textContent = fn8;
     }
     // Reset Q8 options when returning to Q7
     if (step === 11) {
       document.getElementById('q8-opt1').style.display = '';
       document.getElementById('q8-opt3').style.display = '';
     }
-    // Personalise Q7 with broker name
+    // Personalise Q7 with broker first name
     if (step === 11) {
-      const b7 = answers.broker || 'your Adviser';
+      const b7 = firstName(answers.broker);
       document.getElementById('q7-text').textContent = `Did ${b7} explain the importance of protecting yourself and family from this eventuality?`;
     }
-    // Personalise Feefo step with broker name
+    // Personalise Feefo step with broker first name
     if (step === 17 && answers.broker) {
-      document.getElementById('feefo-broker').textContent = answers.broker;
+      document.getElementById('feefo-broker').textContent = firstName(answers.broker);
     }
     // Set review subtitle
     if (step === 15 && answers.name) {
       document.getElementById('review-subtitle').textContent =
-        `Thanks, ${answers.name}. Click below to submit your responses.`;
+        `Thanks, ${firstName(answers.name)}. Click below to submit your responses.`;
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -773,7 +794,7 @@
     btn.classList.add('selected');
     answers.q5 = 'No';
     if (answers.broker) {
-      document.getElementById('q5-broker').textContent = answers.broker;
+      document.getElementById('q5-broker').textContent = firstName(answers.broker);
     }
     document.getElementById('q5-info-box').style.display = 'block';
     document.getElementById('q5-back-row').style.display = 'none';
@@ -785,8 +806,9 @@
     btn.classList.add('selected');
     answers.q6 = 'No';
     if (answers.broker) {
-      document.getElementById('q6-broker').textContent = answers.broker;
-      document.getElementById('q6-broker2').textContent = answers.broker;
+      const fn6b = firstName(answers.broker);
+      document.getElementById('q6-broker').textContent = fn6b;
+      document.getElementById('q6-broker2').textContent = fn6b;
     }
     document.getElementById('q6-info-box').style.display = 'block';
     document.getElementById('q6-back-row').style.display = 'none';
