@@ -876,7 +876,6 @@
   });
 
   function submitComment() {
-    answers.rating = starRating || null;
     answers.comment = document.getElementById('comment-field').value.trim() || '';
     navigate(15);
   }
@@ -931,8 +930,8 @@
       'Q8 Protection Status':    answers.q8     || '',
       'Q9 Literature Clarity':   answers.q9     || '',
       'Q10 Support Required':    answers.q10    || '',
-      'Comment':                 answers.rating = starRating || null;
-    answers.comment || '',
+      'Comment':                 answers.comment || '',
+      'Rating':                  starRating || null,
       'Submitted At':            new Date().toISOString()
     };
 
