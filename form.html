@@ -587,6 +587,18 @@
       <div class="step-label">Almost done</div>
       <div class="title" style="font-size:22px">Ready to submit?</div>
       <div class="subtitle" id="review-subtitle">Thanks for completing the questionnaire. Click below to send your responses.</div>
+
+      <div style="margin: 28px 0 24px; text-align:center;">
+        <div style="font-size:15px; font-weight:600; color:#1e3a5f; margin-bottom:14px;">Please rate your experience</div>
+        <div id="star-rating" style="display:flex; justify-content:center; gap:10px;">
+          <span class="star" data-val="1" onclick="setRating(1)" style="font-size:36px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
+          <span class="star" data-val="2" onclick="setRating(2)" style="font-size:36px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
+          <span class="star" data-val="3" onclick="setRating(3)" style="font-size:36px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
+          <span class="star" data-val="4" onclick="setRating(4)" style="font-size:36px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
+          <span class="star" data-val="5" onclick="setRating(5)" style="font-size:36px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
+        </div>
+      </div>
+
       <div id="submit-err" class="err"></div>
       <div class="btn-row">
         <button class="btn-primary" id="btn-submit" onclick="submitForm()">Submit responses &rarr;</button>
@@ -864,9 +876,35 @@
   });
 
   function submitComment() {
+    answers.rating = starRating || null;
     answers.comment = document.getElementById('comment-field').value.trim() || '';
     navigate(15);
   }
+
+
+  let starRating = 0;
+  function setRating(val) {
+    starRating = val;
+    document.querySelectorAll('.star').forEach(s => {
+      s.style.color = parseInt(s.dataset.val) <= val ? '#f59e0b' : '#d1d5db';
+    });
+  }
+  // Hover effects
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.star').forEach(s => {
+      s.addEventListener('mouseenter', () => {
+        const hv = parseInt(s.dataset.val);
+        document.querySelectorAll('.star').forEach(s2 => {
+          s2.style.color = parseInt(s2.dataset.val) <= hv ? '#fbbf24' : '#d1d5db';
+        });
+      });
+      s.addEventListener('mouseleave', () => {
+        document.querySelectorAll('.star').forEach(s2 => {
+          s2.style.color = parseInt(s2.dataset.val) <= starRating ? '#f59e0b' : '#d1d5db';
+        });
+      });
+    });
+  });
 
   async function submitForm() {
     const btn = document.getElementById('btn-submit');
@@ -893,7 +931,8 @@
       'Q8 Protection Status':    answers.q8     || '',
       'Q9 Literature Clarity':   answers.q9     || '',
       'Q10 Support Required':    answers.q10    || '',
-      'Comment':                 answers.comment || '',
+      'Comment':                 answers.rating = starRating || null;
+    answers.comment || '',
       'Submitted At':            new Date().toISOString()
     };
 
