@@ -339,10 +339,10 @@
       <div class="question" id="q1-text">Did you feel your Adviser was suitably knowledgeable?</div>
       <div class="q-spacer"></div>
       <div class="choices">
-        <button class="choice-btn" onclick="choose(this,'q1','Yes',4)">
+        <button class="choice-btn" onclick="choose(this,'q1','Yes, I agree with this.',4)">
           <span class="dot"></span>Yes, I agree with this.
         </button>
-        <button class="choice-btn" onclick="choose(this,'q1','No',4)">
+        <button class="choice-btn" onclick="choose(this,'q1','No, I did not get this impression.',4)">
           <span class="dot"></span>No, I did not get this impression.
         </button>
       </div>
@@ -355,13 +355,13 @@
       <div class="question" id="q2-question">You will have received a report explaining our recommendation. Did it accurately reflect what was discussed?</div>
       <div class="q-spacer"></div>
       <div class="choices">
-        <button class="choice-btn" onclick="chooseQ2(this,'Not received')">
+        <button class="choice-btn" onclick="chooseQ2(this,'I have not received this report.')">
           <span class="dot"></span>I have not received this report.
         </button>
-        <button class="choice-btn" onclick="chooseQ2(this,'Yes - easy to understand')">
+        <button class="choice-btn" onclick="chooseQ2(this,'Yes, and it was easy to understand.')">
           <span class="dot"></span>Yes, and it was easy to understand.
         </button>
-        <button class="choice-btn" onclick="chooseQ2(this,'Yes - did not understand')">
+        <button class="choice-btn" onclick="chooseQ2(this,'Yes, but I did not really understand it.')">
           <span class="dot"></span>Yes, but I did not really understand it.
         </button>
       </div>
@@ -393,10 +393,10 @@
       <div class="question" id="q3-text">Would you like your Adviser to walk you through the report?</div>
       <div class="hint">Our advice letters can be detailed. We're happy to call and explain everything.</div>
       <div class="choices">
-        <button class="choice-btn" onclick="choose(this,'q3','No - fully understood',7)">
+        <button class="choice-btn" onclick="choose(this,'q3','No thanks, I fully understand my new mortgage.',7)">
           <span class="dot"></span>No thanks, I fully understand my new mortgage.
         </button>
-        <button class="choice-btn" id="q3-call-btn" onclick="choose(this,'q3','Yes - please call me',7)">
+        <button class="choice-btn" id="q3-call-btn" onclick="choose(this,'q3','Yes please, I\'d like my Adviser to call me.',7)">
           <span class="dot"></span>Yes please, I'd like my Adviser to call me.
         </button>
       </div>
@@ -409,10 +409,10 @@
       <div class="question">Checking your understanding: Does your new mortgage have a Fixed or Variable interest rate?</div>
       <div class="hint">Fixed is where your repayments will not change for an initial period. Variable, sometimes known as a tracker mortgage, where repayments may change in line with the Bank of England base rate.</div>
       <div class="choices">
-        <button class="choice-btn" onclick="choose(this,'q4','Fixed',8)">
+        <button class="choice-btn" onclick="choose(this,'q4','Fixed, my repayments will not change for an initial period.',8)">
           <span class="dot"></span>Fixed, my repayments will not change for an initial period.
         </button>
-        <button class="choice-btn" onclick="choose(this,'q4','Variable',8)">
+        <button class="choice-btn" onclick="choose(this,'q4','Variable, my repayments may go up or down.',8)">
           <span class="dot"></span>Variable, my repayments may go up or down.
         </button>
         <button class="choice-btn" id="q4-unsure-btn" onclick="chooseQ4Unsure(this)">
@@ -564,13 +564,13 @@
       <div class="question">Did you require any additional support during this stage of the mortgage process?</div>
       <div class="q-spacer"></div>
       <div class="choices">
-        <button class="choice-btn" onclick="choose(this,'q10','No',17)">
+        <button class="choice-btn" onclick="choose(this,'q10','No, not really.',17)">
           <span class="dot"></span>No, not really.
         </button>
-        <button class="choice-btn" onclick="choose(this,'q10','Yes - needs met',17)">
+        <button class="choice-btn" onclick="choose(this,'q10','Yes, and my needs were met.',17)">
           <span class="dot"></span>Yes, and my needs were met.
         </button>
-        <button class="choice-btn" onclick="choose(this,'q10','Yes - needs not met',17)">
+        <button class="choice-btn" onclick="choose(this,'q10','Yes, but I did not receive adequate support.',17)">
           <span class="dot"></span>Yes, but I did not receive adequate support.
         </button>
       </div>
@@ -851,14 +851,14 @@
     answers.q2 = value;
 
     let target;
-    if (value === 'Not received') {
+    if (value === 'I have not received this report.') {
       answers.q2b = 'N/A';
       answers.q3  = 'N/A - Report not received';
       target = 7; // skip Q2b and Q3
-    } else if (value === 'Yes - easy to understand') {
+    } else if (value === 'Yes, and it was easy to understand.') {
       answers.q3 = 'N/A - Report understood';
       target = 7; // skip Q2b and Q3
-    } else if (value === 'Yes - did not understand') {
+    } else if (value === 'Yes, but I did not really understand it.') {
       target = 5; // show Q2b follow-up
     } else {
       target = 6; // go to Q3
