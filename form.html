@@ -438,7 +438,7 @@
     <!-- ── STEP 8: Q5 — Future review ── -->
     <div class="step" id="step-8">
       <div class="step-label">Question 5 of 10</div>
-      <div class="question" id="q5-text">Did your Adviser explain they'll review your mortgage before the initial rate expires?</div>
+      <div class="question" id="q5-text">Did your Adviser explain that your mortgage will be reviewed before the initial rate ends?</div>
       <div class="subtitle" style="margin-top:6px; margin-bottom:0; font-size:13px; color:#64748b;">For example, in 5 years time if you went for a 5 year fixed rate mortgage.</div>
       <div class="q-spacer"></div>
       <div class="choices">
@@ -467,7 +467,7 @@
     <!-- ── STEP 10: Q6 — Home at risk ── -->
     <div class="step" id="step-10">
       <div class="step-label">Question 6 of 10</div>
-      <div class="question" id="q6-text">Did your Adviser explain that your home may be repossessed if you do not keep up repayments on your mortgage?</div>
+      <div class="question" id="q6-text">Did your Adviser explain that your home may be repossessed if you do not keep up your mortgage repayments?</div>
       <div class="q-spacer"></div>
       <div class="choices">
         <button class="choice-btn" onclick="choose(this,'q6','Yes',11)">
@@ -499,7 +499,7 @@
       <div class="subtitle" style="margin-bottom:12px; font-size:20px; font-weight:600; color:var(--text); line-height:1.45;">
         Considering that your home may be repossessed if you do not keep up repayments on your mortgage.
       </div>
-      <div class="question" id="q7-text">Did your Adviser explain the importance of protecting yourself and family from this eventuality?</div>
+      <div class="question" id="q7-text">Considering that your home may be repossessed if you do not keep up your mortgage repayments, did your Adviser explain the importance of protecting yourself and your family against this risk?</div>
       <div class="q-spacer"></div>
       <div class="choices">
         <button class="choice-btn" onclick="chooseQ7(this,'Yes')">
@@ -518,7 +518,7 @@
     <div class="step" id="step-12">
       <div class="step-label">Question 8 of 10</div>
       <div class="question" id="q8-question">Which best describes your current protection situation?</div>
-      <div class="hint">When we say protection, we mean insurance policies designed to support you upon accident, sickness, critical illness and death.</div>
+      <div class="hint">When we say protection, we mean insurance policies designed to support you in the event of accident, sickness, critical illness, or death.</div>
       <div class="q-spacer"></div>
       <div class="choices">
         <button class="choice-btn" id="q8-opt1" onclick="choose(this,'q8','Arranged with adviser',13)">
@@ -537,7 +537,7 @@
           <span class="dot"></span><span>I am in discussion with another company about protection.</span>
         </button>
         <button class="choice-btn" onclick="choose(this,'q8','Arranged with another company',13)">
-          <span class="dot"></span><span>I have already arranged protection with another company.</span>
+          <span class="dot"></span><span>I have completed my protection arrangements elsewhere.</span>
         </button>
       </div>
       <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
@@ -728,7 +728,7 @@
       document.getElementById('q5-info-box').style.display = 'none';
       document.getElementById('q5-back-row').style.display = '';
       const b5 = firstName(answers.broker);
-      document.getElementById('q5-text').textContent = `Did ${b5} explain they'll review your mortgage before the initial rate expires?`;
+      document.getElementById('q5-text').textContent = `Did ${b5} explain that your mortgage will be reviewed before the initial rate ends?`;
       document.getElementById('q5-broker').textContent = b5;
     }
     // Reset Q6 info box when returning to step
@@ -740,7 +740,7 @@
     if (step === 10 && answers.broker) {
       const fn6 = firstName(answers.broker);
       document.getElementById('q6-text').innerHTML =
-        `Did <strong>${fn6}</strong> explain that your home may be repossessed if you do not keep up repayments on your mortgage?`;
+        `Did <strong>${fn6}</strong> explain that your home may be repossessed if you do not keep up your mortgage repayments?`;
       document.getElementById('q6-broker').textContent = fn6;
       document.getElementById('q6-broker2').textContent = fn6;
     }
@@ -763,7 +763,7 @@
     // Personalise Q7 with broker first name
     if (step === 11) {
       const b7 = firstName(answers.broker);
-      document.getElementById('q7-text').textContent = `Did ${b7} explain the importance of protecting yourself and family from this eventuality?`;
+      document.getElementById('q7-text').textContent = `Considering that your home may be repossessed if you do not keep up your mortgage repayments, did ${b7} explain the importance of protecting yourself and your family against this risk?`;
     }
     // Personalise Feefo step with broker first name
     if (step === 17 && answers.broker) {
