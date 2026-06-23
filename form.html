@@ -353,17 +353,17 @@
     <!-- ── STEP 4: Q2 — Report accuracy ── -->
     <div class="step" id="step-4">
       <div class="step-label">Question 2 of 10</div>
-      <div class="question" id="q2-question">You will have received a report explaining our recommendation. Did it accurately reflect what was discussed?</div>
+      <div class="question" id="q2-question">You will have received a report explaining our recommended mortgage. Did it accurately reflect what was discussed?</div>
       <div class="q-spacer"></div>
       <div class="choices">
-        <button class="choice-btn" onclick="chooseQ2(this,'I have not received this report.')">
-          <span class="dot"></span>I have not received this report.
-        </button>
         <button class="choice-btn" onclick="chooseQ2(this,'Yes, and it was easy to understand.')">
           <span class="dot"></span>Yes, and it was easy to understand.
         </button>
-        <button class="choice-btn" onclick="chooseQ2(this,'Yes, but I did not really understand it.')">
-          <span class="dot"></span>Yes, but I did not really understand it.
+        <button class="choice-btn" onclick="chooseQ2(this,'I have not received this report.')">
+          <span class="dot"></span>I have not received this report.
+        </button>
+        <button class="choice-btn" onclick="chooseQ2(this,'I did not really understand it.')">
+          <span class="dot"></span>I did not really understand it.
         </button>
       </div>
       <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
@@ -703,7 +703,7 @@
     // Personalise Q2 with broker first name
     if (step === 4 && answers.broker) {
       document.getElementById('q2-question').textContent =
-        `You will have received a report explaining our recommendation. Did it accurately reflect what you and ${firstName(answers.broker)} discussed?`;
+        `You will have received a report explaining our recommended mortgage. Did it accurately reflect what you and ${firstName(answers.broker)} discussed?`;
     }
     // Reset Q4 unsure box when returning to step
     if (step === 7) {
@@ -859,7 +859,7 @@
     } else if (value === 'Yes, and it was easy to understand.') {
       answers.q3 = 'N/A - Report understood';
       target = 7; // skip Q2b and Q3
-    } else if (value === 'Yes, but I did not really understand it.') {
+    } else if (value === 'I did not really understand it.') {
       target = 5; // show Q2b follow-up
     } else {
       target = 6; // go to Q3
