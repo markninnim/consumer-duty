@@ -974,7 +974,7 @@
       const negativeItems = [];
 
       if (answers.q1 === 'No, I did not get this impression.')
-        negativeItems.push({ issue: `You told us you did not feel your Adviser demonstrated sufficient knowledge.`, action: `We take this seriously and ${bn} will be in touch with you to discuss this further.` });
+        negativeItems.push({ issue: `You told us you did not feel your Adviser demonstrated sufficient knowledge.`, action: `We take this seriously and a member of our compliance team will be in touch with you to discuss this further.` });
 
       if (answers.q2 === 'I have not received this report.')
         negativeItems.push({ issue: `You told us you have not yet received your suitability report.`, action: `In the first instance, we are going to ask ${bn} to send you a copy. If you have any questions after reading it, please do not hesitate to ask.` });
@@ -1005,7 +1005,7 @@
         msg.innerHTML = `It seems you have an excellent understanding of your new mortgage. If you have any questions, please do not hesitate to contact ${bn}.`;
       } else {
         const blocks = negativeItems.map(i =>
-          `<div style="background:#f0f9ff; border-left:3px solid var(--accent); border-radius:8px; padding:12px 14px; margin-bottom:10px; font-size:15px; text-align:left;"><strong style="display:block; margin-bottom:6px; color:var(--primary);">${i.issue}</strong>${i.action}</div>`
+          `<div style="background:#f0f9ff; border-left:6px solid var(--accent); padding:12px 14px; margin-bottom:10px; font-size:15px; text-align:left;"><strong style="display:block; margin-bottom:6px; color:var(--primary);">${i.issue}</strong>${i.action}</div>`
         ).join('');
         msg.innerHTML = `Thank you for completing this questionnaire. We have noted the following:<div style="margin-top:14px;">${blocks}</div>`;
       }
