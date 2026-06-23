@@ -209,6 +209,15 @@
     .choice-btn.selected .dot::after,
     .choice-btn:hover .dot::after { display: block; }
 
+    .nps-btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:40px; height:40px; border-radius:8px;
+      border:2px solid var(--border); background:#fff;
+      font-size:15px; font-weight:600; color:var(--text);
+      cursor:pointer; transition:background .15s, color .15s, border-color .15s;
+    }
+    .nps-btn:hover { border-color:var(--accent); color:var(--accent); }
+
     /* Text inputs */
     .input-field {
       width: 100%;
@@ -408,7 +417,7 @@
     <div class="step" id="step-7">
       <div class="step-label">Question 4 of 10</div>
       <div class="question">Checking your understanding: Does your new mortgage have a Fixed or Variable interest rate?</div>
-      <div class="hint">Fixed is where your repayments will not change for an initial period. Variable, sometimes known as a tracker mortgage, where repayments may change in line with the Bank of England base rate.</div>
+      <div class="hint">Fixed is where your repayments will not change for an initial period. Variable, sometimes known as a tracker mortgage, is where repayments may change in line with the Bank of England base rate.</div>
       <div class="choices">
         <button class="choice-btn" onclick="choose(this,'q4','Fixed, my repayments will not change for an initial period.',8)">
           <span class="dot"></span>Fixed, my repayments will not change for an initial period.
@@ -496,9 +505,6 @@
     <!-- ── STEP 11: Q7 — Protection importance ── -->
     <div class="step" id="step-11">
       <div class="step-label">Question 7 of 10</div>
-      <div class="subtitle" style="margin-bottom:12px; font-size:20px; font-weight:600; color:var(--text); line-height:1.45;">
-        Considering that your home may be repossessed if you do not keep up repayments on your mortgage.
-      </div>
       <div class="question" id="q7-text">Considering that your home may be repossessed if you do not keep up your mortgage repayments, did your Adviser explain the importance of protecting yourself and your family against this risk?</div>
       <div class="q-spacer"></div>
       <div class="choices">
@@ -589,14 +595,25 @@
         Once your mortgage completes, our review partners <strong>Feefo</strong> will reach out to invite you to share your experience with <strong id="feefo-broker">your Adviser</strong>.
       </div>
       <div class="subtitle" style="margin-bottom:20px;">
-        If you'd like to rate your experience of <strong id="rating-broker">your Adviser</strong> so far, we'd be delighted to hear it.
+        Based on your experience so far, how likely is it that you would recommend <strong id="rating-broker">your Adviser</strong> to friends or family?
       </div>
-      <div style="display:flex; justify-content:flex-start; gap:8px; margin-bottom:20px;">
-        <span class="star" data-val="1" onclick="setRating(1)" style="font-size:28px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
-        <span class="star" data-val="2" onclick="setRating(2)" style="font-size:28px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
-        <span class="star" data-val="3" onclick="setRating(3)" style="font-size:28px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
-        <span class="star" data-val="4" onclick="setRating(4)" style="font-size:28px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
-        <span class="star" data-val="5" onclick="setRating(5)" style="font-size:28px; cursor:pointer; color:#d1d5db; transition:color 0.15s;">★</span>
+      <div style="margin-bottom:8px;">
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <span class="nps-btn" data-val="1" onclick="setRating(1)">1</span>
+          <span class="nps-btn" data-val="2" onclick="setRating(2)">2</span>
+          <span class="nps-btn" data-val="3" onclick="setRating(3)">3</span>
+          <span class="nps-btn" data-val="4" onclick="setRating(4)">4</span>
+          <span class="nps-btn" data-val="5" onclick="setRating(5)">5</span>
+          <span class="nps-btn" data-val="6" onclick="setRating(6)">6</span>
+          <span class="nps-btn" data-val="7" onclick="setRating(7)">7</span>
+          <span class="nps-btn" data-val="8" onclick="setRating(8)">8</span>
+          <span class="nps-btn" data-val="9" onclick="setRating(9)">9</span>
+          <span class="nps-btn" data-val="10" onclick="setRating(10)">10</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:13px; color:var(--muted);">
+          <span>Not very likely</span>
+          <span>Very likely</span>
+        </div>
       </div>
       <textarea id="comment-field" placeholder="Leave a comment (optional)" style="width:100%; min-height:80px; padding:14px 16px; border:2px solid var(--border); border-radius:12px; font-family:inherit; font-size:15px; color:var(--text); resize:vertical; outline:none; transition:border-color .2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
       <div class="btn-row" style="margin-top:16px;">
@@ -897,26 +914,13 @@
   let starRating = 0;
   function setRating(val) {
     starRating = val;
-    document.querySelectorAll('.star').forEach(s => {
-      s.style.color = parseInt(s.dataset.val) <= val ? '#f59e0b' : '#d1d5db';
+    document.querySelectorAll('.nps-btn').forEach(b => {
+      const v = parseInt(b.dataset.val);
+      b.style.background = v === val ? 'var(--accent)' : '';
+      b.style.color = v === val ? '#fff' : '';
+      b.style.borderColor = v === val ? 'var(--accent)' : '';
     });
   }
-  // Hover effects
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.star').forEach(s => {
-      s.addEventListener('mouseenter', () => {
-        const hv = parseInt(s.dataset.val);
-        document.querySelectorAll('.star').forEach(s2 => {
-          s2.style.color = parseInt(s2.dataset.val) <= hv ? '#fbbf24' : '#d1d5db';
-        });
-      });
-      s.addEventListener('mouseleave', () => {
-        document.querySelectorAll('.star').forEach(s2 => {
-          s2.style.color = parseInt(s2.dataset.val) <= starRating ? '#f59e0b' : '#d1d5db';
-        });
-      });
-    });
-  });
 
   async function submitForm() {
     const btn = document.getElementById('btn-submit');
