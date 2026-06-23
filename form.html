@@ -970,33 +970,44 @@
         throw new Error(body.error?.message || `HTTP ${res.status}`);
       }
 
+      const bn = firstName(answers.broker) || 'your Adviser';
       const negativeItems = [];
-      if (answers.q1  === 'No, I did not get this impression.')
-        negativeItems.push('you did not feel your Adviser demonstrated sufficient knowledge');
-      if (answers.q2  === 'I have not received this report.')
-        negativeItems.push('you have not yet received your suitability report');
-      if (answers.q2  === 'I did not really understand it.')
-        negativeItems.push('you did not fully understand your suitability report');
-      if (answers.q3  === 'Yes please, I\'d like my Adviser to call me.')
-        negativeItems.push('you would like your Adviser to call you to walk through your report');
-      if (answers.q4  === 'Unsure')
-        negativeItems.push('you were unsure about your mortgage rate type');
-      if (answers.q5  === 'No')
-        negativeItems.push('your Adviser did not explain when your mortgage rate will be reviewed');
-      if (answers.q6  === 'No')
-        negativeItems.push('your Adviser did not explain the risk of repossession');
-      if (answers.q7  === 'No')
-        negativeItems.push('your Adviser did not explain the importance of protecting yourself and your family');
+
+      if (answers.q1 === 'No, I did not get this impression.')
+        negativeItems.push(`We take this seriously and ${bn} will be in touch with you to discuss this further.`);
+
+      if (answers.q2 === 'I have not received this report.')
+        negativeItems.push(`In the first instance, we are going to ask ${bn} to send you a copy of your report. If you have any questions after reading it, please do not hesitate to ask.`);
+
+      if (answers.q2 === 'I did not really understand it.')
+        negativeItems.push(`We are sorry you did not fully understand your report — it can be a complicated document. The best thing to do is have ${bn} contact you to walk through it together.`);
+
+      if (answers.q3 === 'Yes please, I\'d like my Adviser to call me.')
+        negativeItems.push(`We will arrange for ${bn} to give you a call to go through your report in detail.`);
+
+      if (answers.q4 === 'Unsure')
+        negativeItems.push(`We hope our explanation of rate types helped clarify this. If you have any further questions, please do not hesitate to contact ${bn}.`);
+
+      if (answers.q5 === 'No')
+        negativeItems.push(`We hope our explanation of mortgage reviews helped clarify this. If you have any further questions, please contact ${bn}.`);
+
+      if (answers.q6 === 'No')
+        negativeItems.push(`We hope our explanation of this helped. If you have any further questions, please contact ${bn}.`);
+
+      if (answers.q7 === 'No')
+        negativeItems.push(`Protecting yourself and your family is an important part of your mortgage. We will ask ${bn} to discuss your protection options with you.`);
+
       if (answers.q10 === 'Yes, but I did not receive adequate support.')
-        negativeItems.push('you did not receive adequate support when you needed it');
+        negativeItems.push(`We are sorry to hear this. ${bn} will be in touch with you to make sure everything is put right.`);
 
       const msg = document.getElementById('thankyou-msg');
       if (negativeItems.length === 0) {
-        const bn = firstName(answers.broker) || 'your Adviser';
         msg.innerHTML = `It seems you have an excellent understanding of your new mortgage. If you have any questions, please do not hesitate to contact ${bn}.`;
       } else {
-        const bullets = negativeItems.map(i => `<li style="margin-bottom:6px;">${i}</li>`).join('');
-        msg.innerHTML = `Thank you for completing this questionnaire. You have told us:<ul style="margin:12px 0 12px 18px; padding:0; text-align:left;">${bullets}</ul>We will be in touch with you shortly to discuss.`;
+        const blocks = negativeItems.map(i =>
+          `<div style="background:#f0f9ff; border-left:3px solid var(--accent); border-radius:8px; padding:12px 14px; margin-bottom:10px; font-size:15px; text-align:left;">${i}</div>`
+        ).join('');
+        msg.innerHTML = `Thank you for completing this questionnaire. We have noted the following:<div style="margin-top:14px;">${blocks}</div>`;
       }
       navigate(16);
     } catch (e) {
