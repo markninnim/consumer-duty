@@ -974,38 +974,38 @@
       const negativeItems = [];
 
       if (answers.q1 === 'No, I did not get this impression.')
-        negativeItems.push(`We take this seriously and ${bn} will be in touch with you to discuss this further.`);
+        negativeItems.push({ issue: `You told us you did not feel your Adviser demonstrated sufficient knowledge.`, action: `We take this seriously and ${bn} will be in touch with you to discuss this further.` });
 
       if (answers.q2 === 'I have not received this report.')
-        negativeItems.push(`In the first instance, we are going to ask ${bn} to send you a copy of your report. If you have any questions after reading it, please do not hesitate to ask.`);
+        negativeItems.push({ issue: `You told us you have not yet received your suitability report.`, action: `In the first instance, we are going to ask ${bn} to send you a copy. If you have any questions after reading it, please do not hesitate to ask.` });
 
       if (answers.q2 === 'I did not really understand it.')
-        negativeItems.push(`We are sorry you did not fully understand your report — it can be a complicated document. The best thing to do is have ${bn} contact you to walk through it together.`);
+        negativeItems.push({ issue: `You told us you did not fully understand your suitability report.`, action: `We are sorry about this — it can be a complicated document. The best thing to do is have ${bn} contact you to walk through it together.` });
 
       if (answers.q3 === 'Yes please, I\'d like my Adviser to call me.')
-        negativeItems.push(`We will arrange for ${bn} to give you a call to go through your report in detail.`);
+        negativeItems.push({ issue: `You told us you would like your Adviser to call you to go through your report.`, action: `We will arrange for ${bn} to give you a call to go through it in detail.` });
 
       if (answers.q4 === 'Unsure')
-        negativeItems.push(`We hope our explanation of rate types helped clarify this. If you have any further questions, please do not hesitate to contact ${bn}.`);
+        negativeItems.push({ issue: `You told us you were unsure about your mortgage rate type.`, action: `We hope our explanation helped clarify this. If you have any further questions, please do not hesitate to contact ${bn}.` });
 
       if (answers.q5 === 'No')
-        negativeItems.push(`We hope our explanation of mortgage reviews helped clarify this. If you have any further questions, please contact ${bn}.`);
+        negativeItems.push({ issue: `You told us your Adviser did not explain when your mortgage rate will be reviewed.`, action: `We hope our explanation helped clarify this. If you have any further questions, please contact ${bn}.` });
 
       if (answers.q6 === 'No')
-        negativeItems.push(`We hope our explanation of this helped. If you have any further questions, please contact ${bn}.`);
+        negativeItems.push({ issue: `You told us your Adviser did not explain the risk of your home being repossessed.`, action: `We hope our explanation helped clarify this. If you have any further questions, please contact ${bn}.` });
 
       if (answers.q7 === 'No')
-        negativeItems.push(`Protecting yourself and your family is an important part of your mortgage. We will ask ${bn} to discuss your protection options with you.`);
+        negativeItems.push({ issue: `You told us your Adviser did not explain the importance of protecting yourself and your family.`, action: `Protecting yourself and your family is an important part of your mortgage. We will ask ${bn} to discuss your protection options with you.` });
 
       if (answers.q10 === 'Yes, but I did not receive adequate support.')
-        negativeItems.push(`We are sorry to hear this. ${bn} will be in touch with you to make sure everything is put right.`);
+        negativeItems.push({ issue: `You told us you did not receive adequate support when you needed it.`, action: `We are sorry to hear this. ${bn} will be in touch with you to make sure everything is put right.` });
 
       const msg = document.getElementById('thankyou-msg');
       if (negativeItems.length === 0) {
         msg.innerHTML = `It seems you have an excellent understanding of your new mortgage. If you have any questions, please do not hesitate to contact ${bn}.`;
       } else {
         const blocks = negativeItems.map(i =>
-          `<div style="background:#f0f9ff; border-left:3px solid var(--accent); border-radius:8px; padding:12px 14px; margin-bottom:10px; font-size:15px; text-align:left;">${i}</div>`
+          `<div style="background:#f0f9ff; border-left:3px solid var(--accent); border-radius:8px; padding:12px 14px; margin-bottom:10px; font-size:15px; text-align:left;"><strong style="display:block; margin-bottom:6px; color:var(--primary);">${i.issue}</strong>${i.action}</div>`
         ).join('');
         msg.innerHTML = `Thank you for completing this questionnaire. We have noted the following:<div style="margin-top:14px;">${blocks}</div>`;
       }
