@@ -970,23 +970,33 @@
         throw new Error(body.error?.message || `HTTP ${res.status}`);
       }
 
-      const negatives = [
-        answers.q1  === 'No, I did not get this impression.',
-        answers.q2  === 'I have not received this report.' || answers.q2 === 'I did not really understand it.',
-        answers.q3  === 'Yes please, I\'d like my Adviser to call me.',
-        answers.q4  === 'Unsure',
-        answers.q5  === 'No',
-        answers.q6  === 'No',
-        answers.q7  === 'No',
-        answers.q10 === 'Yes, but I did not receive adequate support.'
-      ];
-      const hasNegative = negatives.some(Boolean);
+      const negativeItems = [];
+      if (answers.q1  === 'No, I did not get this impression.')
+        negativeItems.push('you did not feel your Adviser demonstrated sufficient knowledge');
+      if (answers.q2  === 'I have not received this report.')
+        negativeItems.push('you have not yet received your suitability report');
+      if (answers.q2  === 'I did not really understand it.')
+        negativeItems.push('you did not fully understand your suitability report');
+      if (answers.q3  === 'Yes please, I\'d like my Adviser to call me.')
+        negativeItems.push('you would like your Adviser to call you to walk through your report');
+      if (answers.q4  === 'Unsure')
+        negativeItems.push('you were unsure about your mortgage rate type');
+      if (answers.q5  === 'No')
+        negativeItems.push('your Adviser did not explain when your mortgage rate will be reviewed');
+      if (answers.q6  === 'No')
+        negativeItems.push('your Adviser did not explain the risk of repossession');
+      if (answers.q7  === 'No')
+        negativeItems.push('your Adviser did not explain the importance of protecting yourself and your family');
+      if (answers.q10 === 'Yes, but I did not receive adequate support.')
+        negativeItems.push('you did not receive adequate support when you needed it');
+
       const msg = document.getElementById('thankyou-msg');
-      if (!hasNegative) {
+      if (negativeItems.length === 0) {
         const bn = firstName(answers.broker) || 'your Adviser';
         msg.innerHTML = `It seems you have an excellent understanding of your new mortgage. If you have any questions, please do not hesitate to contact ${bn}.`;
       } else {
-        msg.textContent = 'Thank you for completing this questionnaire. We have noted your responses and one of the team will be in touch with you shortly.';
+        const bullets = negativeItems.map(i => `<li style="margin-bottom:6px;">${i}</li>`).join('');
+        msg.innerHTML = `Thank you for completing this questionnaire. You have told us:<ul style="margin:12px 0 12px 18px; padding:0; text-align:left;">${bullets}</ul>We will be in touch with you shortly to discuss.`;
       }
       navigate(16);
     } catch (e) {
