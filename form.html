@@ -1010,6 +1010,17 @@
         ).join('');
         msg.innerHTML = `Thank you for completing this questionnaire. We have noted the following:<div style="margin-top:14px;">${blocks}</div>`;
       }
+      if (starRating > 0) {
+        let npsText = '';
+        if (starRating <= 6) {
+          npsText = `We are sorry to learn that based on your experience so far you would not recommend us to friends and family and will do our best to build your trust in us.`;
+        } else if (starRating <= 8) {
+          npsText = `We value your score and will be working hard to improve your experience and hope to change this in the future.`;
+        } else {
+          npsText = `We are delighted to hear that based on your experience so far, you would be prepared to recommend ${bn} to your friends and family. We truly appreciate it.`;
+        }
+        msg.innerHTML += `<div style="margin-top:14px; font-size:15px; color:var(--muted);">${npsText}</div>`;
+      }
       navigate(16);
     } catch (e) {
       btn.disabled = false;
