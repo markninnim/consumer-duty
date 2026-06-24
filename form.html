@@ -400,7 +400,7 @@
     <!-- ── STEP 6: Q3 — Report walkthrough (CONDITIONAL) ── -->
     <div class="step" id="step-6">
       <div class="step-label">Question 3 of 10</div>
-      <div class="question" id="q3-text">Would you like your Adviser to walk you through the report?</div>
+      <div class="question" id="q3-text">Would you like your Adviser to explain the contents of the report to you?</div>
       <div class="hint">Our advice letters can be detailed. We're happy to call and explain everything.</div>
       <div class="choices">
         <button class="choice-btn" onclick="choose(this,'q3','No thanks, I fully understand my new mortgage.',7)">
@@ -736,7 +736,7 @@
     // Personalise Q3 question and call button with broker first name
     if (step === 6 && answers.broker) {
       const fn3 = firstName(answers.broker);
-      document.getElementById('q3-text').textContent = `Would you like ${fn3} to walk you through the report?`;
+      document.getElementById('q3-text').textContent = `Would you like ${fn3} to explain the contents of the report to you?`;
       document.getElementById('q3-call-btn').innerHTML =
         `<span class="dot"></span>Yes please, I'd like ${fn3} to call me.`;
     }
