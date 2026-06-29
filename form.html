@@ -314,7 +314,46 @@
         We want to make sure everything has been explained clearly to you. These short questions help us make sure you have a full understanding of your mortgage.<br><br>
         Where we find anything that requires attention, we will contact you to discuss.
       </div>
-      <button class="btn-primary" onclick="navigate(1)">Get started &rarr;</button>
+      <button class="btn-primary" onclick="navigate(18)">Get started &rarr;</button>
+    </div>
+
+    <!-- ── STEP 18: Language question ── -->
+    <div class="step" id="step-18">
+      <div class="step-label">Before we begin</div>
+      <div class="question">Would you like to complete this questionnaire in a different language?</div>
+      <div class="q-spacer"></div>
+      <div class="choices">
+        <button class="choice-btn" onclick="navigate(19)">
+          <span class="dot"></span>Yes, please change the language.
+        </button>
+        <button class="choice-btn" onclick="navigate(1)">
+          <span class="dot"></span>No, English is fine.
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 19: Language list ── -->
+    <div class="step" id="step-19">
+      <div class="step-label">Choose your language</div>
+      <div class="question">Select your preferred language.</div>
+      <div class="q-spacer"></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('fr')">🇫🇷 French</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('es')">🇪🇸 Spanish</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('de')">🇩🇪 German</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('it')">🇮🇹 Italian</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('pt')">🇵🇹 Portuguese</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('pl')">🇵🇱 Polish</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('ro')">🇷🇴 Romanian</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('nl')">🇳🇱 Dutch</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('cs')">🇨🇿 Czech</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('sk')">🇸🇰 Slovak</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('hu')">🇭🇺 Hungarian</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('bg')">🇧🇬 Bulgarian</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('el')">🇬🇷 Greek</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('ne')">🇳🇵 Nepali</button>
+      </div>
+      <div class="btn-row"><button class="btn-back" onclick="navigate(18)">Back</button></div>
     </div>
 
     <!-- ── STEP 1: Your name ── -->
@@ -910,6 +949,11 @@
     navigate(15);
   }
 
+
+  function translatePage(langCode) {
+    const url = encodeURIComponent(window.location.href);
+    window.location.href = `https://translate.google.com/translate?sl=en&tl=${langCode}&u=${url}`;
+  }
 
   let starRating = 0;
   function setRating(val) {
