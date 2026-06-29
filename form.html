@@ -338,20 +338,8 @@
       <div class="question">Select your preferred language.</div>
       <div class="q-spacer"></div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('fr')">🇫🇷 French</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('es')">🇪🇸 Spanish</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('de')">🇩🇪 German</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('it')">🇮🇹 Italian</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('pt')">🇵🇹 Portuguese</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('pl')">🇵🇱 Polish</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('ro')">🇷🇴 Romanian</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('nl')">🇳🇱 Dutch</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('cs')">🇨🇿 Czech</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('sk')">🇸🇰 Slovak</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('hu')">🇭🇺 Hungarian</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('bg')">🇧🇬 Bulgarian</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('el')">🇬🇷 Greek</button>
-        <button class="choice-btn" style="justify-content:flex-start;" onclick="translatePage('ne')">🇳🇵 Nepali</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="setLanguage('ro')">🇷🇴 Română</button>
+        <button class="choice-btn" style="justify-content:flex-start;" onclick="setLanguage('ne')">🇳🇵 नेपाली</button>
       </div>
       <div class="btn-row"><button class="btn-back" onclick="navigate(18)">Back</button></div>
     </div>
@@ -650,8 +638,8 @@
           <span class="nps-btn" data-val="10" onclick="setRating(10)">10</span>
         </div>
         <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:13px; color:var(--muted);">
-          <span>Not very likely</span>
-          <span>Very likely</span>
+          <span id="nps-not-likely">Not very likely</span>
+          <span id="nps-very-likely">Very likely</span>
         </div>
       </div>
       <textarea id="comment-field" placeholder="Leave a comment (optional)" style="width:100%; min-height:80px; padding:14px 16px; border:2px solid var(--border); border-radius:12px; font-family:inherit; font-size:15px; color:var(--text); resize:vertical; outline:none; transition:border-color .2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
@@ -728,7 +716,7 @@
     wrap.style.display = 'block';
 
     const qNum  = stepQMap[step] || TOTAL_Q;
-    const label = step <= 14 ? `Question ${qNum} of ${TOTAL_Q}` : 'Review';
+    const label = step <= 14 ? tr('prog', qNum, TOTAL_Q) : tr('prog_review');
     const pct   = Math.round((qNum / TOTAL_Q) * 100);
 
     document.getElementById('progressLabel').textContent = label;
@@ -748,18 +736,16 @@
 
     // Personalise step 2 once name is known
     if (step === 2 && answers.name) {
-      document.getElementById('q2-title').textContent = 'Who is your mortgage adviser?';
+      document.getElementById('q2-title').textContent = tr('s2_q');
     }
     // Personalise Q1 greeting
     if (step === 3 && answers.name) {
       const broker = firstName(answers.broker);
-      document.getElementById('q1-text').textContent =
-        `${firstName(answers.name)}, did you feel ${broker} was suitably knowledgeable?`;
+      document.getElementById('q1-text').textContent = tr('q1_q', firstName(answers.name), broker);
     }
     // Personalise Q2 with broker first name
     if (step === 4 && answers.broker) {
-      document.getElementById('q2-question').textContent =
-        `You will have received a report explaining our recommended mortgage. Did it accurately reflect what you and ${firstName(answers.broker)} discussed?`;
+      document.getElementById('q2-question').textContent = tr('q2_q', firstName(answers.broker));
     }
     // Reset Q4 unsure box when returning to step
     if (step === 7) {
@@ -768,23 +754,23 @@
       if (answers.broker) {
         const fn4 = firstName(answers.broker);
         document.getElementById('q4-unsure-btn').innerHTML =
-          `<span class="dot"></span>I'm unsure, please can you ask ${fn4} to clarify for me.`;
+          `<span class="dot"></span>${tr('q4_a3', fn4)}`;
         document.getElementById('q4-unsure-broker').textContent = fn4;
       }
     }
     // Personalise Q3 question and call button with broker first name
     if (step === 6 && answers.broker) {
       const fn3 = firstName(answers.broker);
-      document.getElementById('q3-text').textContent = `Would you like ${fn3} to explain the contents of the report to you?`;
+      document.getElementById('q3-text').textContent = tr('q3_q', fn3);
       document.getElementById('q3-call-btn').innerHTML =
-        `<span class="dot"></span>Yes please, I'd like ${fn3} to call me.`;
+        `<span class="dot"></span>${tr('q3_yes', fn3)}`;
     }
     // Reset Q5 info box when returning to step; personalise with broker first name
     if (step === 8) {
       document.getElementById('q5-info-box').style.display = 'none';
       document.getElementById('q5-back-row').style.display = '';
       const b5 = firstName(answers.broker);
-      document.getElementById('q5-text').textContent = `Did ${b5} explain that your mortgage will be reviewed before the initial rate ends?`;
+      document.getElementById('q5-text').textContent = tr('q5_q', b5);
       document.getElementById('q5-broker').textContent = b5;
     }
     // Reset Q6 info box when returning to step
@@ -795,15 +781,13 @@
     // Personalise Q6 with broker first name
     if (step === 10 && answers.broker) {
       const fn6 = firstName(answers.broker);
-      document.getElementById('q6-text').innerHTML =
-        `Did <strong>${fn6}</strong> explain that your home may be repossessed if you do not keep up your mortgage repayments?`;
+      document.getElementById('q6-text').innerHTML = tr('q6_q', fn6);
       document.getElementById('q6-broker').textContent = fn6;
       document.getElementById('q6-broker2').textContent = fn6;
     }
     // Personalise Q8 question with customer first name
     if (step === 12 && answers.name) {
-      document.getElementById('q8-question').textContent =
-        `${firstName(answers.name)}, which best describes your current protection situation?`;
+      document.getElementById('q8-question').textContent = tr('q8_q', firstName(answers.name));
     }
     // Personalise Q8 options with broker first name
     if (step === 12 && answers.broker) {
@@ -819,17 +803,17 @@
     // Personalise Q7 with broker first name
     if (step === 11) {
       const b7 = firstName(answers.broker);
-      document.getElementById('q7-text').textContent = `Considering that your home may be repossessed if you do not keep up your mortgage repayments, did ${b7} explain the importance of protecting yourself and your family against this risk?`;
+      document.getElementById('q7-text').textContent = tr('q7_q', b7);
     }
     // Personalise Feefo step with broker first name
     if (step === 17 && answers.broker) {
-      document.getElementById('feefo-broker').textContent = firstName(answers.broker);
-      document.getElementById('rating-broker').textContent = firstName(answers.broker);
+      const fb = firstName(answers.broker);
+      document.querySelector('#step-17 .subtitle:first-of-type').innerHTML = tr('nps_feefo', fb);
+      document.querySelector('#step-17 .subtitle:last-of-type').innerHTML = tr('nps_q', fb);
     }
     // Set review subtitle
     if (step === 15 && answers.name) {
-      document.getElementById('review-subtitle').textContent =
-        `Thanks, ${firstName(answers.name)}. Click below to submit your responses.`;
+      document.getElementById('review-subtitle').textContent = tr('review_sub', firstName(answers.name));
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -950,10 +934,232 @@
   }
 
 
-  function translatePage(langCode) {
-    const url = encodeURIComponent(window.location.href);
-    window.location.href = `https://translate.google.com/translate?sl=en&tl=${langCode}&u=${url}`;
+  // ── TRANSLATIONS ──────────────────────────────────────────────────────────
+  let lang = 'en';
+
+  const T = {
+    en: {
+      back:'Back', continue:'Continue →', submit:'Submit responses →', submitting:'Submitting…',
+      intro_title:'Understanding Your New Mortgage.',
+      intro_sub:'We want to make sure everything has been explained clearly to you. These short questions help us make sure you have a full understanding of your mortgage.<br><br>Where we find anything that requires attention, we will contact you to discuss.',
+      intro_btn:'Get started →',
+      lang_lbl:'Before we begin', lang_q:'Would you like to complete this questionnaire in a different language?',
+      lang_yes:'Yes, please change the language.', lang_no:'No, English is fine.',
+      lang_choose_lbl:'Choose your language', lang_choose_q:'Select your preferred language.',
+      s1_lbl:'Before we start', s1_q:"What's your name?", s1_ph:'Your full name',
+      s2_lbl:'Before we start', s2_q:'Who is your mortgage adviser?', s2_ph:"Adviser's name",
+      prog:(n,t)=>`Question ${n} of ${t}`, prog_review:'Review',
+      q1_lbl:'Question 1 of 10', q1_q:(n,b)=>`${n}, did you feel ${b} was suitably knowledgeable?`,
+      q1_yes:'Yes, I agree with this.', q1_no:'No, I did not get this impression.',
+      q2_lbl:'Question 2 of 10', q2_q:(b)=>`You will have received a report explaining our recommended mortgage. Did it accurately reflect what you and ${b} discussed?`,
+      q2_a1:'Yes, and it was easy to understand.', q2_a2:'I have not received this report.', q2_a3:'I did not really understand it.',
+      q2b_lbl:'Question 2 of 10: follow up', q2b_q:'How could we improve the report for you?',
+      q2b_a1:'Make it less complicated.', q2b_a2:'Create the report in my first language.', q2b_a3:'Make it easier to read.',
+      q3_lbl:'Question 3 of 10', q3_q:(b)=>`Would you like ${b} to explain the contents of the report to you?`,
+      q3_hint:"Our advice letters can be detailed. We’re happy to call and explain everything.",
+      q3_no:'No thanks, I fully understand my new mortgage.', q3_yes:(b)=>`Yes please, I’d like ${b} to call me.`,
+      q4_lbl:'Question 4 of 10', q4_q:'Checking your understanding: Does your new mortgage have a Fixed or Variable interest rate?',
+      q4_hint:'Fixed is where your repayments will not change for an initial period. Variable, sometimes known as a tracker mortgage, is where repayments may change in line with the Bank of England base rate.',
+      q4_a1:'Fixed, my repayments will not change for an initial period.', q4_a2:'Variable, my repayments may go up or down.',
+      q4_a3:(b)=>`I’m unsure, please can you ask ${b} to clarify for me.`,
+      q4_unsure:(b)=>`If you are unsure of the type of mortgage, you will be able to find this information within the suitability report mentioned earlier. Please have a look at this while we get <strong id="q4-unsure-broker">${b}</strong> to contact you to explain further.`,
+      q5_lbl:'Question 5 of 10', q5_q:(b)=>`Did ${b} explain that your mortgage will be reviewed before the initial rate ends?`,
+      q5_sub:'For example, in 5 years time if you went for a 5 year fixed rate mortgage.', q5_yes:'Yes', q5_no:'No',
+      q5_info:(b)=>`<strong>Just so you know.</strong> <strong id="q5-broker">${b}</strong> will stay in contact with you and when the time comes will search the entire market to find the most suitable deal for your circumstances, ensuring you do not end up on your lender’s standard variable rate and paying more money.`,
+      q6_lbl:'Question 6 of 10', q6_q:(b)=>`Did <strong>${b}</strong> explain that your home may be repossessed if you do not keep up your mortgage repayments?`,
+      q6_yes:'Yes', q6_no:'No',
+      q6_info:(b)=>`<strong>Just so you know.</strong> <strong id="q6-broker">${b}</strong> will mention this as part of your mortgage advice. Your home may be repossessed if you do not keep up repayments on your mortgage. If you have any questions please do not hesitate to ask <strong id="q6-broker2">${b}</strong>.`,
+      q7_lbl:'Question 7 of 10', q7_q:(b)=>`Considering that your home may be repossessed if you do not keep up your mortgage repayments, did ${b} explain the importance of protecting yourself and your family against this risk?`,
+      q7_yes:'Yes', q7_no:'No',
+      q8_lbl:'Question 8 of 10', q8_q:(n)=>`${n}, which best describes your current protection situation?`,
+      q8_hint:'When we say protection, we mean insurance policies designed to support you in the event of accident, sickness, critical illness, or death.',
+      q8_a1:(b)=>`I have already arranged this with <span id="q8-broker1">${b}</span>.`,
+      q8_a2:'I have decided not to protect my mortgage. I understand the risks.',
+      q8_a3:(b)=>`I am still in discussion with <span id="q8-broker2">${b}</span> about my protection needs.`,
+      q8_a4:'I would like to start a discussion about my protection needs.',
+      q8_a5:'I am in discussion with another company about protection.',
+      q8_a6:'I have completed my protection arrangements elsewhere.',
+      q9_lbl:'Question 9 of 10', q9_q:'How clear have you found our written communications so far?',
+      q9_clear:'Clear.', q9_unclear:'Unclear.',
+      q10_lbl:'Question 10 of 10', q10_q:'Did you require any additional support during this stage of the mortgage process?',
+      q10_a1:'No, not really.', q10_a2:'Yes, and my needs were met.', q10_a3:'Yes, but I did not receive adequate support.',
+      nps_lbl:'NPS Rating',
+      nps_feefo:(b)=>`Once your mortgage completes, our review partners <strong>Feefo</strong> will reach out to invite you to share your experience with <strong id="feefo-broker">${b}</strong>.`,
+      nps_q:(b)=>`Based on your experience so far, how likely is it that you would recommend <strong id="rating-broker">${b}</strong> to friends or family?`,
+      nps_not:'Not very likely', nps_very:'Very likely',
+      review_lbl:'Almost done', review_title:'Ready to submit?',
+      review_sub:(n)=>`Thanks, ${n}. Click below to submit your responses.`,
+      done_title:'All done.', err_submit:(m)=>`⚠️  Submission failed: ${m}`,
+    },
+    ro: {
+      back:'Înapoi', continue:'Continuați →', submit:'Trimiteți răspunsurile →', submitting:'Se trimite…',
+      intro_title:'Înțelegerea Noului Dumneavoastră Credit Ipotecar.',
+      intro_sub:'Dorim să ne asigurăm că totul v-a fost explicat clar. Aceste întrebări scurte ne ajută să verificăm că aveți o înțelegere completă a creditului dumneavoastră ipotecar.<br><br>Dacă identificăm ceva care necesită atenție, vă vom contacta pentru a discuta.',
+      intro_btn:'Începeți →',
+      lang_lbl:'Înainte de a începe', lang_q:'Doriți să completați acest chestionar într-o altă limbă?',
+      lang_yes:'Da, vă rog schimbați limba.', lang_no:'Nu, engleza este în regulă.',
+      lang_choose_lbl:'Alegeți limba', lang_choose_q:'Selectați limba preferată.',
+      s1_lbl:'Înainte de a începe', s1_q:'Care este numele dumneavoastră?', s1_ph:'Numele complet',
+      s2_lbl:'Înainte de a începe', s2_q:'Cine este consilierul dumneavoastră ipotecar?', s2_ph:'Numele consilierului',
+      prog:(n,t)=>`Întrebarea ${n} din ${t}`, prog_review:'Revizuire',
+      q1_lbl:'Întrebarea 1 din 10', q1_q:(n,b)=>`${n}, ați simțit că ${b} a fost suficient de bine pregătit?`,
+      q1_yes:'Da, sunt de acord cu acest lucru.', q1_no:'Nu, nu am avut această impresie.',
+      q2_lbl:'Întrebarea 2 din 10', q2_q:(b)=>`Veți fi primit un raport care explică creditul ipotecar recomandat. A reflectat cu exactitate ceea ce ați discutat cu ${b}?`,
+      q2_a1:'Da, și a fost ușor de înțeles.', q2_a2:'Nu am primit acest raport.', q2_a3:'Nu l-am înțeles prea bine.',
+      q2b_lbl:'Întrebarea 2 din 10: continuare', q2b_q:'Cum am putea îmbunătăți raportul pentru dumneavoastră?',
+      q2b_a1:'Să fie mai puțin complicat.', q2b_a2:'Să creeze raportul în prima mea limbă.', q2b_a3:'Să fie mai ușor de citit.',
+      q3_lbl:'Întrebarea 3 din 10', q3_q:(b)=>`Doriți ca ${b} să vă explice conținutul raportului?`,
+      q3_hint:'Scrisorile noastre de consiliere pot fi detaliate. Suntem bucuroși să vă sunăm și să explicăm totul.',
+      q3_no:'Nu, mulțumesc, înțeleg pe deplin noul meu credit ipotecar.', q3_yes:(b)=>`Da, vă rog, aș dori ca ${b} să mă sune.`,
+      q4_lbl:'Întrebarea 4 din 10', q4_q:'Verificarea înțelegerii: Noul dumneavoastră credit ipotecar are o rată fixă sau variabilă?',
+      q4_hint:'Rata fixă înseamnă că ratele nu se vor schimba pentru o perioadă inițială. Rata variabilă, uneori cunoscută ca credit tracker, este acolo unde ratele se pot modifica în funcție de rata de bază a Băncii Angliei.',
+      q4_a1:'Fixă, ratele mele nu se vor schimba pentru o perioadă inițială.', q4_a2:'Variabilă, ratele mele pot crește sau scădea.',
+      q4_a3:(b)=>`Nu sunt sigur(ă), vă rog să cereți lui ${b} să clarifice.`,
+      q4_unsure:(b)=>`Dacă nu sunteți sigur(ă) de tipul creditului ipotecar, veți putea găsi aceste informații în raportul de adecvare menționat anterior. Vă rugăm să consultați acest raport în timp ce îl contactăm pe <strong id="q4-unsure-broker">${b}</strong> să vă explice mai detaliat.`,
+      q5_lbl:'Întrebarea 5 din 10', q5_q:(b)=>`A explicat ${b} că creditul dumneavoastră ipotecar va fi revizuit înainte de expirarea ratei inițiale?`,
+      q5_sub:'De exemplu, dacă ați ales un credit ipotecar cu rată fixă pe 5 ani, în 5 ani.', q5_yes:'Da', q5_no:'Nu',
+      q5_info:(b)=>`<strong>Doar să știți.</strong> <strong id="q5-broker">${b}</strong> va rămâne în contact cu dumneavoastră și, când va veni momentul, va căuta pe întreaga piață cea mai potrivită ofertă pentru circumstanțele dumneavoastră, asigurându-se că nu veți ajunge la rata variabilă standard a creditorului.`,
+      q6_lbl:'Întrebarea 6 din 10', q6_q:(b)=>`A explicat <strong>${b}</strong> că locuința dumneavoastră poate fi recuperată dacă nu vă plătiți ratele ipotecare?`,
+      q6_yes:'Da', q6_no:'Nu',
+      q6_info:(b)=>`<strong>Doar să știți.</strong> <strong id="q6-broker">${b}</strong> va menționa acest lucru ca parte a consilierii dumneavoastră ipotecare. Locuința dumneavoastră poate fi recuperată dacă nu vă plătiți ratele. Dacă aveți întrebări, nu ezitați să îl contactați pe <strong id="q6-broker2">${b}</strong>.`,
+      q7_lbl:'Întrebarea 7 din 10', q7_q:(b)=>`Luând în considerare că locuința dumneavoastră poate fi recuperată dacă nu vă plătiți ratele ipotecare, a explicat ${b} importanța de a vă proteja pe dumneavoastră și familia împotriva acestui risc?`,
+      q7_yes:'Da', q7_no:'Nu',
+      q8_lbl:'Întrebarea 8 din 10', q8_q:(n)=>`${n}, care descrie cel mai bine situația dumneavoastră actuală privind protecția?`,
+      q8_hint:'Prin protecție ne referim la polițe de asigurare concepute pentru a vă sprijini în caz de accident, boală, boală gravă sau deces.',
+      q8_a1:(b)=>`Am aranjat deja aceasta cu <span id="q8-broker1">${b}</span>.`,
+      q8_a2:'Am decis să nu îmi protejez creditul ipotecar. Înțeleg riscurile.',
+      q8_a3:(b)=>`Sunt încă în discuție cu <span id="q8-broker2">${b}</span> despre nevoile mele de protecție.`,
+      q8_a4:'Aș dori să încep o discuție despre nevoile mele de protecție.',
+      q8_a5:'Sunt în discuție cu o altă companie despre protecție.',
+      q8_a6:'Mi-am finalizat aranjamentele de protecție în altă parte.',
+      q9_lbl:'Întrebarea 9 din 10', q9_q:'Cât de clare au fost comunicările noastre scrise până acum?',
+      q9_clear:'Clare.', q9_unclear:'Neclare.',
+      q10_lbl:'Întrebarea 10 din 10', q10_q:'Ați necesitat sprijin suplimentar în această etapă a procesului ipotecar?',
+      q10_a1:'Nu, nu prea.', q10_a2:'Da, și nevoile mele au fost satisfăcute.', q10_a3:'Da, dar nu am primit sprijin adecvat.',
+      nps_lbl:'Evaluare NPS',
+      nps_feefo:(b)=>`Odată ce creditul dumneavoastră ipotecar se finalizează, partenerii noștri de recenzii <strong>Feefo</strong> vă vor contacta pentru a vă invita să vă împărtășiți experiența cu <strong id="feefo-broker">${b}</strong>.`,
+      nps_q:(b)=>`Pe baza experienței dumneavoastră de până acum, cât de probabil este să recomandați <strong id="rating-broker">${b}</strong> prietenilor sau familiei?`,
+      nps_not:'Puțin probabil', nps_very:'Foarte probabil',
+      review_lbl:'Aproape gata', review_title:'Gata să trimiteți?',
+      review_sub:(n)=>`Mulțumim, ${n}. Faceți clic mai jos pentru a trimite răspunsurile.`,
+      done_title:'Gata.', err_submit:(m)=>`⚠️  Eroare la trimitere: ${m}`,
+    },
+    ne: {
+      back:'पछाडि', continue:'जारी राख्नुहोस् →', submit:'जवाफहरू पेश गर्नुहोस् →', submitting:'पेश गर्दैछौं…',
+      intro_title:'आफ्नो नयाँ बंधकी ऋण बुझ्नुहोस्।',
+      intro_sub:'हामी सुनिश्चित गर्न चाहन्छौं कि सबै कुरा तपाईंलाई स्पष्ट रूपमा बुझाइएको छ। यी छोटा प्रश्नहरूले तपाईंले आफ्नो बंधकी ऋणबारे पूर्ण बुझाइ राख्नुभएको छ भनी सुनिश्चित गर्न मद्दत गर्छन्।<br><br>हामीले ध्यान दिन आवश्यक कुनै कुरा फेला पारेमा, हामी तपाईंलाई सम्पर्क गर्नेछौं।',
+      intro_btn:'सुरु गर्नुहोस् →',
+      lang_lbl:'सुरु गर्नु अघि', lang_q:'के तपाईं यो प्रश्नावली अर्को भाषामा पूरा गर्न चाहनुहुन्छ?',
+      lang_yes:'हो, कृपया भाषा परिवर्तन गर्नुहोस्।', lang_no:'होइन, अंग्रेजी ठीक छ।',
+      lang_choose_lbl:'भाषा छान्नुहोस्', lang_choose_q:'कृपया आफ्नो मनपर्ने भाषा छान्नुहोस्।',
+      s1_lbl:'सुरु गर्नु अघि', s1_q:'तपाईंको नाम के हो?', s1_ph:'पूरा नाम',
+      s2_lbl:'सुरु गर्नु अघि', s2_q:'तपाईंको बंधकी ऋण सल्लाहकार को हुनुहुन्छ?', s2_ph:'सल्लाहकारको नाम',
+      prog:(n,t)=>`प्रश्न ${n} / ${t}`, prog_review:'समीक्षा',
+      q1_lbl:'प्रश्न १ / १०', q1_q:(n,b)=>`${n}, के तपाईंलाई लाग्यो कि ${b} उपयुक्त रूपमा जानकार हुनुहुन्छ?`,
+      q1_yes:'हो, म यसमा सहमत छु।', q1_no:'होइन, मलाई यो धारणा भएन।',
+      q2_lbl:'प्रश्न २ / १०', q2_q:(b)=>`तपाईंले हाम्रो सिफारिस गरिएको बंधकी ऋण बुझाउने एक रिपोर्ट प्राप्त गर्नुभएको हुनेछ। के यसले तपाईं र ${b}ले छलफल गरेको कुरालाई सही रूपमा प्रतिबिम्बित गर्‍यो?`,
+      q2_a1:'हो, र यो बुझ्न सजिलो थियो।', q2_a2:'मैले यो रिपोर्ट प्राप्त गरेको छैन।', q2_a3:'मैले साँच्चिकै बुझिनँ।',
+      q2b_lbl:'प्रश्न २ / १०: थप प्रश्न', q2b_q:'हामी तपाईंको लागि रिपोर्ट कसरी सुधार गर्न सक्छौं?',
+      q2b_a1:'यसलाई कम जटिल बनाउनुहोस्।', q2b_a2:'रिपोर्ट मेरो पहिलो भाषामा बनाउनुहोस्।', q2b_a3:'यसलाई पढ्न सजिलो बनाउनुहोस्।',
+      q3_lbl:'प्रश्न ३ / १०', q3_q:(b)=>`के तपाईं चाहनुहुन्छ कि ${b}ले तपाईंलाई रिपोर्टको सामग्री बुझाओस्?`,
+      q3_hint:'हाम्रा सल्लाह पत्रहरू विस्तृत हुन सक्छन्। हामी फोन गरेर सबै कुरा बुझाउन खुसी छौं।',
+      q3_no:'धन्यवाद, म आफ्नो नयाँ बंधकी ऋण पूर्ण रूपमा बुझेको छु।', q3_yes:(b)=>`हो कृपया, म चाहन्छु कि ${b}ले मलाई फोन गरोस्।`,
+      q4_lbl:'प्रश्न ४ / १०', q4_q:'तपाईंको बुझाइ जाँच्दै: तपाईंको नयाँ बंधकी ऋणको स्थिर वा परिवर्तनशील ब्याज दर छ?',
+      q4_hint:'स्थिर भनेको प्रारम्भिक अवधिका लागि तपाईंको किस्ता बदलिने छैन। परिवर्तनशील, कहिलेकाहीं ट्र्याकर बंधकी भनेर चिनिन्छ, जहाँ बैंक अफ इङ्ल्याण्डको आधार दर अनुसार किस्ता बदलिन सक्छ।',
+      q4_a1:'स्थिर, मेरो किस्ता प्रारम्भिक अवधिका लागि बदलिने छैन।', q4_a2:'परिवर्तनशील, मेरो किस्ता बढ्न वा घट्न सक्छ।',
+      q4_a3:(b)=>`म निश्चित छैन, कृपया ${b}लाई स्पष्ट पार्न भन्नुहोस्।`,
+      q4_unsure:(b)=>`यदि तपाईं बंधकी ऋणको प्रकारबारे निश्चित हुनुहुन्न भने, यो जानकारी अघि उल्लेख गरिएको उपयुक्तता रिपोर्टमा फेला पार्न सकिन्छ। कृपया यो हेर्नुहोस् जबकि हामी <strong id="q4-unsure-broker">${b}</strong>लाई तपाईंलाई थप बुझाउन सम्पर्क गर्छौं।`,
+      q5_lbl:'प्रश्न ५ / १०', q5_q:(b)=>`के ${b}ले बताउनुभयो कि प्रारम्भिक दर समाप्त हुनु अघि तपाईंको बंधकी ऋण समीक्षा गरिनेछ?`,
+      q5_sub:'उदाहरणका लागि, ५ वर्षको स्थिर दर बंधकी लिएमा ५ वर्षमा।', q5_yes:'हो', q5_no:'होइन',
+      q5_info:(b)=>`<strong>जानकारीका लागि।</strong> <strong id="q5-broker">${b}</strong> तपाईंसँग सम्पर्कमा रहनुहुनेछ र समय आउँदा तपाईंको परिस्थितिका लागि सबैभन्दा उपयुक्त सम्झौता खोज्न सम्पूर्ण बजार खोज्नुहुनेछ।`,
+      q6_lbl:'प्रश्न ६ / १०', q6_q:(b)=>`के <strong>${b}</strong>ले बताउनुभयो कि यदि तपाईंले बंधकी ऋणको किस्ता तिर्न सक्नुभएन भने तपाईंको घर लिइन सक्छ?`,
+      q6_yes:'हो', q6_no:'होइन',
+      q6_info:(b)=>`<strong>जानकारीका लागि।</strong> <strong id="q6-broker">${b}</strong>ले यो कुरा तपाईंको बंधकी सल्लाहको भागको रूपमा उल्लेख गर्नुहुनेछ। यदि तपाईंले किस्ता तिर्न सक्नुभएन भने तपाईंको घर लिइन सक्छ। कुनै प्रश्न भएमा <strong id="q6-broker2">${b}</strong>लाई सोध्न नहिचकिचाउनुहोस्।`,
+      q7_lbl:'प्रश्न ७ / १०', q7_q:(b)=>`यो विचार गर्दै कि यदि तपाईंले बंधकी ऋणको किस्ता तिर्न सक्नुभएन भने तपाईंको घर लिइन सक्छ, के ${b}ले तपाईंलाई र तपाईंको परिवारलाई यस जोखिमबाट जोगाउनको महत्त्व बुझाउनुभयो?`,
+      q7_yes:'हो', q7_no:'होइन',
+      q8_lbl:'प्रश्न ८ / १०', q8_q:(n)=>`${n}, तपाईंको हालको सुरक्षा अवस्थालाई कुनले सबैभन्दा राम्रोसँग वर्णन गर्छ?`,
+      q8_hint:'सुरक्षा भन्नाले दुर्घटना, बिमारी, गम्भीर रोग, वा मृत्युको अवस्थामा तपाईंलाई समर्थन गर्न डिजाइन गरिएको बिमा पोलिसीहरू हो।',
+      q8_a1:(b)=>`मैले <span id="q8-broker1">${b}</span>सँग यो पहिले नै मिलाएको छु।`,
+      q8_a2:'मैले आफ्नो बंधकी ऋण सुरक्षित नगर्ने निर्णय गरेको छु। म जोखिम बुझेको छु।',
+      q8_a3:(b)=>`म अझैपनि <span id="q8-broker2">${b}</span>सँग मेरो सुरक्षा आवश्यकताबारे छलफलमा छु।`,
+      q8_a4:'म आफ्नो सुरक्षा आवश्यकताबारे छलफल सुरु गर्न चाहन्छु।',
+      q8_a5:'म सुरक्षाबारे अर्को कम्पनीसँग छलफलमा छु।',
+      q8_a6:'मैले आफ्नो सुरक्षा व्यवस्था अन्यत्र पूरा गरेको छु।',
+      q9_lbl:'प्रश्न ९ / १०', q9_q:'अहिलेसम्म हाम्रा लिखित सञ्चारहरू कति स्पष्ट पाउनुभयो?',
+      q9_clear:'स्पष्ट।', q9_unclear:'अस्पष्ट।',
+      q10_lbl:'प्रश्न १० / १०', q10_q:'बंधकी प्रक्रियाको यस चरणमा तपाईंलाई थप समर्थन आवश्यक भयो?',
+      q10_a1:'होइन, खासै होइन।', q10_a2:'हो, र मेरो आवश्यकता पूरा भयो।', q10_a3:'हो, तर मैले पर्याप्त समर्थन पाइनँ।',
+      nps_lbl:'NPS मूल्याङ्कन',
+      nps_feefo:(b)=>`तपाईंको बंधकी ऋण पूरा भएपछि, हाम्रा समीक्षा साझेदार <strong>Feefo</strong>ले तपाईंलाई <strong id="feefo-broker">${b}</strong>सँगको आफ्नो अनुभव साझा गर्न आमन्त्रण गर्नेछन्।`,
+      nps_q:(b)=>`अहिलेसम्मको तपाईंको अनुभवको आधारमा, तपाईं <strong id="rating-broker">${b}</strong>लाई साथीहरू वा परिवारलाई सिफारिस गर्ने कति सम्भावना छ?`,
+      nps_not:'धेरै कम सम्भावना', nps_very:'धेरै सम्भावना',
+      review_lbl:'लगभग सकियो', review_title:'पेश गर्न तयार हुनुहुन्छ?',
+      review_sub:(n)=>`धन्यवाद, ${n}। आफ्नो जवाफ पेश गर्न तल क्लिक गर्नुहोस्।`,
+      done_title:'सकियो।', err_submit:(m)=>`⚠️  पेश गर्न असफल: ${m}`,
+    }
+  };
+
+  function tr(key, ...args) {
+    const v = (T[lang] || T.en)[key] ?? T.en[key];
+    return typeof v === 'function' ? v(...args) : (v ?? key);
   }
+
+  function setLanguage(code) {
+    lang = code;
+    applyTranslations();
+    navigate(1);
+  }
+
+  function applyTranslations() {
+    const tx = (sel, key, html=false) => { const el=document.querySelector(sel); if(el){ const v=(T[lang]||T.en)[key]; if(typeof v==='string') el[html?'innerHTML':'textContent']=v; }};
+    const setBtn = (sel, key) => { const el=document.querySelector(sel); if(!el)return; const dot=el.querySelector('.dot'); el.textContent=tr(key); if(dot)el.prepend(dot); };
+
+    tx('#step-0 .title','intro_title'); tx('#step-0 .subtitle','intro_sub',true); tx('#step-0 .btn-primary','intro_btn');
+    tx('#step-18 .step-label','lang_lbl'); tx('#step-18 .question','lang_q');
+    const s18b=document.querySelectorAll('#step-18 .choice-btn');
+    if(s18b[0]){const d=s18b[0].querySelector('.dot');s18b[0].textContent=tr('lang_yes');if(d)s18b[0].prepend(d);}
+    if(s18b[1]){const d=s18b[1].querySelector('.dot');s18b[1].textContent=tr('lang_no');if(d)s18b[1].prepend(d);}
+    tx('#step-19 .step-label','lang_choose_lbl'); tx('#step-19 .question','lang_choose_q');
+
+    tx('#step-1 .step-label','s1_lbl'); tx('#step-1 .question','s1_q');
+    const inp1=document.getElementById('inp-name'); if(inp1)inp1.placeholder=tr('s1_ph');
+    const b1=document.getElementById('btn-1-next'); if(b1)b1.textContent=tr('continue');
+    tx('#step-2 .step-label','s2_lbl'); tx('#step-2 .question','s2_q');
+    const inp2=document.getElementById('inp-broker'); if(inp2)inp2.placeholder=tr('s2_ph');
+    const b2=document.getElementById('btn-2-next'); if(b2)b2.textContent=tr('continue');
+
+    setBtn('#step-3 .choices .choice-btn:nth-child(1)','q1_yes'); setBtn('#step-3 .choices .choice-btn:nth-child(2)','q1_no');
+    setBtn('#step-4 .choices .choice-btn:nth-child(1)','q2_a1'); setBtn('#step-4 .choices .choice-btn:nth-child(2)','q2_a2'); setBtn('#step-4 .choices .choice-btn:nth-child(3)','q2_a3');
+    tx('#step-5 .step-label','q2b_lbl'); tx('#step-5 .question','q2b_q');
+    setBtn('#step-5 .choices .choice-btn:nth-child(1)','q2b_a1'); setBtn('#step-5 .choices .choice-btn:nth-child(2)','q2b_a2'); setBtn('#step-5 .choices .choice-btn:nth-child(3)','q2b_a3');
+    tx('#step-6 .step-label','q3_lbl'); tx('#step-6 .hint','q3_hint');
+    setBtn('#step-6 .choices .choice-btn:nth-child(1)','q3_no');
+    tx('#step-7 .step-label','q4_lbl'); tx('#step-7 .question','q4_q'); tx('#step-7 .hint','q4_hint');
+    setBtn('#step-7 .choices .choice-btn:nth-child(1)','q4_a1'); setBtn('#step-7 .choices .choice-btn:nth-child(2)','q4_a2');
+    tx('#step-8 .step-label','q5_lbl');
+    const q5sub=document.querySelector('#step-8 .subtitle'); if(q5sub)q5sub.textContent=tr('q5_sub');
+    setBtn('#step-8 .choices .choice-btn:nth-child(1)','q5_yes'); setBtn('#step-8 .choices .choice-btn:nth-child(2)','q5_no');
+    tx('#step-10 .step-label','q6_lbl');
+    setBtn('#step-10 .choices .choice-btn:nth-child(1)','q6_yes'); setBtn('#step-10 .choices .choice-btn:nth-child(2)','q6_no');
+    tx('#step-11 .step-label','q7_lbl');
+    setBtn('#step-11 .choices .choice-btn:nth-child(1)','q7_yes'); setBtn('#step-11 .choices .choice-btn:nth-child(2)','q7_no');
+    tx('#step-12 .step-label','q8_lbl'); tx('#step-12 .hint','q8_hint');
+    const q8b=document.querySelectorAll('#step-12 .choices .choice-btn');
+    [[1,'q8_a2'],[3,'q8_a4'],[4,'q8_a5'],[5,'q8_a6']].forEach(([i,k])=>{ if(q8b[i]){const sp=q8b[i].querySelector('span:not(.dot)'); if(sp)sp.textContent=tr(k);} });
+    tx('#step-13 .step-label','q9_lbl'); tx('#step-13 .question','q9_q');
+    setBtn('#step-13 .choices .choice-btn:nth-child(1)','q9_clear'); setBtn('#step-13 .choices .choice-btn:nth-child(2)','q9_unclear');
+    tx('#step-14 .step-label','q10_lbl'); tx('#step-14 .question','q10_q');
+    setBtn('#step-14 .choices .choice-btn:nth-child(1)','q10_a1'); setBtn('#step-14 .choices .choice-btn:nth-child(2)','q10_a2'); setBtn('#step-14 .choices .choice-btn:nth-child(3)','q10_a3');
+    tx('#step-17 .step-label','nps_lbl');
+    const nnl=document.getElementById('nps-not-likely'); if(nnl)nnl.textContent=tr('nps_not');
+    const nvl=document.getElementById('nps-very-likely'); if(nvl)nvl.textContent=tr('nps_very');
+    tx('#step-15 .step-label','review_lbl'); tx('#step-15 .title','review_title');
+    const subBtn=document.getElementById('btn-submit'); if(subBtn)subBtn.textContent=tr('submit');
+    tx('#step-16 .title','done_title');
+    document.querySelectorAll('.btn-back').forEach(btn=>{ btn.textContent=tr('back'); });
+    document.querySelectorAll('#q4-unsure-box .btn-primary, #q5-info-box .btn-primary, #q6-info-box .btn-primary').forEach(btn=>{ btn.textContent=tr('continue'); });
+  }
+  // ── END TRANSLATIONS ───────────────────────────────────────────────────────
 
   let starRating = 0;
   function setRating(val) {
@@ -970,7 +1176,7 @@
     const btn = document.getElementById('btn-submit');
     const err = document.getElementById('submit-err');
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    btn.textContent = tr('submitting');
     err.style.display = 'none';
 
     // Concatenate Q2b follow-up into Q2 field if present
@@ -1068,8 +1274,8 @@
       navigate(16);
     } catch (e) {
       btn.disabled = false;
-      btn.textContent = 'Submit responses →';
-      err.textContent = '⚠️  Submission failed: ' + e.message;
+      btn.textContent = tr('submit');
+      err.textContent = tr('err_submit', e.message);
       err.style.display = 'block';
     }
   }
